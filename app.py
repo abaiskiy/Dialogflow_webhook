@@ -45,7 +45,7 @@ def test():
         data = res.json()
         grad = data['weather'][0]['description']
     except Exception as e:
-        grad = "problem"
+        grad = "problem " + e
         pass
 
     speech = grad
