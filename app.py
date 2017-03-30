@@ -39,7 +39,15 @@ def test():
     appid = "01e9d712127bbffa4c9e669f39d3a127"
     
     grad = "dermo"
-
+    try:
+        result = requests.get("http://api.openweathermap.org/data/2.5/weather",
+                    params={'q': s_city, 'type': 'like', 'units': 'metric', 'APPID': appid})
+        data = res.json()
+        grad = data['weather'][0]['description']
+    except Exception as e:
+        grad = "Houston we have problem"
+        pass
+    
     speech = grad
     return {
         "speech": speech,
