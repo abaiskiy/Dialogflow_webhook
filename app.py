@@ -40,12 +40,12 @@ def test():
     
     grad = "dermo"
     try:
-        results = requests.get("http://api.openweathermap.org/data/2.5/find",
+        rez = requests.get("http://api.openweathermap.org/data/2.5/find",
                  params={'q': s_city, 'type': 'like', 'units': 'metric', 'APPID': appid})
-        data = results.json()
+        data = rez.json()
         grad = data['weather'][0]['description']
     except Exception as e:
-        grad = "Houston we have problem"
+        grad = "Houston we have problem" + e.value
         pass
     
     speech = grad
