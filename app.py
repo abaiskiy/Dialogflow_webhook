@@ -84,7 +84,15 @@ def makeWebhookResult(data):
 
     # print(json.dumps(item, indent=4))
 
-    speech = "4e kavo, suchary"
+    import requests
+    s_city = "Almaty"
+    city_id = 0
+    appid = "01e9d712127bbffa4c9e669f39d3a127"       
+    
+    res = requests.get("http://api.openweathermap.org/data/2.5/weather", params={'id': city_id, 'units': 'metric', 'lang': 'ru', 'APPID': appid})
+    data = res.json()
+    
+    speech = "Температура в городе " + data['weather'][0]['description'] + " ебаных градусов"
 
     print("Response:")
     print(speech)
