@@ -45,7 +45,7 @@ def test():
         data = rez.json()
         grad = data['weather'][0]['description']
     except Exception as e:
-        grad = "Houston we have problem " + e.message + " ----- " + e.args
+        grad = "Houston we have problem " + str(e)
         pass
     
     speech = grad
