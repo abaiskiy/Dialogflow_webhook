@@ -10,8 +10,7 @@ from urllib.error import HTTPError
 
 import json
 import os
-import requests
-    
+
 from flask import Flask
 from flask import request
 from flask import make_response
@@ -84,8 +83,9 @@ def makeWebhookResult(data):
         return {}
 
     # print(json.dumps(item, indent=4))
-    
-    speech = "Температура в городе " + condition.get('temp') + " ебаных градусов"
+
+    speech = "Today in " + location.get('city') + ": " + condition.get('text') + \
+             ", the temperature is " + condition.get('temp') + " " + units.get('temperature')
 
     print("Response:")
     print(speech)
