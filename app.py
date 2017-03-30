@@ -35,7 +35,7 @@ def webhook():
 
 
 def test():    
-    s_city = "Petersburg,RU"
+    s_city = "Almaty"
     appid = "01e9d712127bbffa4c9e669f39d3a127"
     
     grad = "dermo"
@@ -45,7 +45,7 @@ def test():
         data = rez.json()
         grad = data['weather'][0]['description']
     except Exception as e:
-        grad = "Houston we have problem" + e.value
+        grad = "Houston we have problem " + e.message + "-----"
         pass
     
     speech = grad
