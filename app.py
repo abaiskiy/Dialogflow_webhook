@@ -10,7 +10,8 @@ from urllib.error import HTTPError
 
 import json
 import os
-
+import requests
+    
 from flask import Flask
 from flask import request
 from flask import make_response
@@ -84,15 +85,14 @@ def makeWebhookResult(data):
 
     # print(json.dumps(item, indent=4))
 
-    import requests
     s_city = "Almaty"
     city_id = 0
     appid = "01e9d712127bbffa4c9e669f39d3a127"       
     
-    res = requests.get("http://api.openweathermap.org/data/2.5/weather", params={'id': city_id, 'units': 'metric', 'lang': 'ru', 'APPID': appid})
-    data = res.json()
+    resultat = requests.get("http://api.openweathermap.org/data/2.5/weather", params={'id': city_id, 'units': 'metric', 'lang': 'ru', 'APPID': appid})
+    datainfo = resultat.json()
     
-    speech = "Температура в городе " + data['weather'][0]['description'] + " ебаных градусов"
+    speech = "Температура в городе " + datainfo['weather'][0]['description'] + " ебаных градусов"
 
     print("Response:")
     print(speech)
