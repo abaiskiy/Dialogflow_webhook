@@ -35,7 +35,21 @@ def webhook():
 
 
 def test():
-    speech = "Some shit"
+    
+    import requests
+    s_city = "Petersburg,RU"
+    appid = "01e9d712127bbffa4c9e669f39d3a127"
+    
+    try:
+        result = requests.get("http://api.openweathermap.org/data/2.5/weather",
+                    params={'q': s_city, 'type': 'like', 'units': 'metric', 'APPID': appid})
+        data = res.json()
+        grad = data['weather'][0]['description']
+    except Exception as e:
+        grad = "problem"
+        pass
+
+    speech = grad
     return {
         "speech": speech,
         "displayText": speech,
