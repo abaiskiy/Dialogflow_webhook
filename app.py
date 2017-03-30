@@ -85,7 +85,7 @@ def makeWebhookResult(data):
 
     # print(json.dumps(item, indent=4))
 
-    s_city = "Almaty"
+    s_city = "Petersburg,RU"
     city_id = 0
     appid = "01e9d712127bbffa4c9e669f39d3a127"       
     
