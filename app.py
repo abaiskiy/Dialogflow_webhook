@@ -10,6 +10,7 @@ from urllib.error import HTTPError
 
 import json
 import os
+import requests
 
 from flask import Flask
 from flask import request
@@ -45,7 +46,7 @@ def test():
         data = res.json()
         grad = data['weather'][0]['description']
     except Exception as e:
-        grad = "problem " + e
+        grad = "Houston we have problem"
         pass
 
     speech = grad
