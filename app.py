@@ -47,7 +47,7 @@ def test():
         temp = str(data['list'][0]['main']['temp'])
         description = data['list'][0]['weather'][0]['description']
         
-        speech = description+"__"+temp + " градусов"
+        speech = "Segodnya v "+s_city+" "+description+", temperatura "+temp + " ebanyh gradusov"
         
     except Exception as e:
         speech = "Houston we have problem " + str(e)
