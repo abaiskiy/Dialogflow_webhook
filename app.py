@@ -47,7 +47,7 @@ def test():
         #data = json.loads(rez.text)
         #grad = str(data) + "***"
         #grad = data[0]['description']
-        grad = data['list']['weather']['main]
+        grad = data.get('list').get('name')
     except Exception as e:
         grad = "Houston we have problem " + str(e)
         pass
