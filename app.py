@@ -35,16 +35,18 @@ def webhook():
 
 
 def test():    
+    
     s_city = "Almaty"
     appid = "01e9d712127bbffa4c9e669f39d3a127"
+    lang = "ru"
     
     try:
         rez = requests.get("http://api.openweathermap.org/data/2.5/find",
-                 params={'q': s_city, 'type': 'like', 'units': 'metric', 'APPID': appid})
-        #data = str(rez.json())
-        #data = rez.json()
+                 params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'metric', 'APPID': appid})
+        
         data = json.loads(rez.text)        
-        speech = data['message']
+        speech = "Сегодня в " + s_city + " " + data['list']['weather']['main'] + ", температура " + data['list']['main]['temp'] + " градусов"
+        
     except Exception as e:
         speech = "Houston we have problem " + str(e)
         pass
