@@ -43,7 +43,7 @@ def test():
         rez = requests.get("http://api.openweathermap.org/data/2.5/find?q=Almaty&units=metric&type=like&APPID=01e9d712127bbffa4c9e669f39d3a127&lang=ru")
         #rez = requests.get("http://api.openweathermap.org/data/2.5/find",
          #        params={'q': s_city, 'type': 'like', 'units': 'metric', 'APPID': appid})
-        data = rez.json()
+        data = str(rez.json())
         #grad = str(data) + "***"
         #grad = data[0]['description']
     except Exception as e:
