@@ -50,7 +50,11 @@ def test(req):
         temp = str(data['list'][0]['main']['temp'])
         description = data['list'][0]['weather'][0]['description']
 
-        speech = "Segodnya v "+s_city+" "+description+", temperatura "+temp + " ebanyh gradusov"
+        u = "Кириллица"
+        uu = u.decode('utf8')
+        s = uu.encode('cp1250')
+        
+        speech = "Segodnya v "+s_city+" "+description+", temperatura "+temp + " ebanyh gradusov" + s
         
     except Exception as e:
         speech = "Houston we have problem " + str(e)
