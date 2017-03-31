@@ -42,7 +42,7 @@ def test():
         rez = requests.get("http://api.openweathermap.org/data/2.5/find",
                  params={'q': s_city, 'type': 'like', 'units': 'metric', 'APPID': appid})
         #data = str(rez.json())
-        data = JSON.parse(rez)
+        data = rez.json()
         speech = data.list.name
     except Exception as e:
         data = "Houston we have problem " + str(e)
