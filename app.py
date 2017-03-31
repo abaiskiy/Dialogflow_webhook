@@ -43,7 +43,7 @@ def test():
                  params={'q': s_city, 'type': 'like', 'units': 'metric', 'APPID': appid})
         #data = str(rez.json())
         #data = rez.json()
-        data = json.loads(rez)
+        data = json.loads(str(rez))
         speech = data['message']
     except Exception as e:
         speech = "Houston we have problem " + str(e)
