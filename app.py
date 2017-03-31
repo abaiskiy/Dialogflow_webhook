@@ -46,7 +46,7 @@ def test():
         
         data = json.loads(rez.text)        
         #speech = "Сегодня в " + s_city + " " + data['list']['weather']['main'] + ", температура " + data['list']['main]['temp'] + " градусов"
-        speech =  data['cod']
+        speech =  data['message']
         
     except Exception as e:
         speech = "Houston we have problem " + str(e)
