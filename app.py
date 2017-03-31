@@ -26,7 +26,7 @@ def webhook():
     print(json.dumps(req, indent=4))
 
     #res = processRequest(req)
-    res = test()
+    res = test(req)
     
     res = json.dumps(res, indent=4)
     r = make_response(res)
@@ -34,9 +34,12 @@ def webhook():
     return r
 
 
-def test():    
+def test(req):    
     
-    s_city = "Almaty"
+    result = req.get("result")
+    parameters = result.get("parameters")
+    s_city = parameters.get("geo-city")
+    
     appid = "01e9d712127bbffa4c9e669f39d3a127"
     lang = "ru"
     try:
