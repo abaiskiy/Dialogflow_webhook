@@ -44,7 +44,7 @@ def test():
                  params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'metric', 'APPID': appid})        
         #data = json.loads(rez)
         data = rez.json()
-        speech = "Сегодня в " + s_city +" "+data['list'][0]['weather'][0]['main']+", температура "+data['list'][0]['main']['temp']+" градусов"
+        speech = data['list'][0]['weather'][0]['main']
     except Exception as e:
         speech = "Houston we have problem " + str(e)
         pass
