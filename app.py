@@ -38,13 +38,13 @@ def test():
     
     s_city = "Almaty"
     appid = "01e9d712127bbffa4c9e669f39d3a127"
-    
+    lang = "ru"
     try:
         rez = requests.get("http://api.openweathermap.org/data/2.5/find",
-                 params={'q': s_city, 'type': 'like', 'units': 'metric', 'APPID': appid})        
+                 params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'metric', 'APPID': appid})        
         #data = json.loads(rez)
         data = rez.json()
-        speech = data['list'][0]['weather'][0]['main']
+        speech = "Сегодня в " + s_city +" "+data['list'][0]['weather'][0]['main']+", температура "+data['list'][0]['main']['temp']+" градусов"
     except Exception as e:
         speech = "Houston we have problem " + str(e)
         pass
