@@ -53,10 +53,7 @@ def test(req):
         temp = str(data['list'][0]['main']['temp'])
         description = data['list'][0]['weather'][0]['description']
 		
-		y = round(11.2)
-		z = str(y)
-		
-        speech = u"Сегодня в "+s_city+" "+description+ u", температура "+temp + u" °C" + z
+        speech = u"Сегодня в "+s_city+" "+description+ u", температура "+temp + u" °C"
         
     except Exception as e:
         speech = u"Кажется такого города не существует..." 
