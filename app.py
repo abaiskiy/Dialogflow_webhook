@@ -41,7 +41,7 @@ def test(req):
     result = req.get("result")
     parameters = result.get("parameters")
     s_city = parameters.get("geo-city")
-	s_day = parameters.get("date")
+	s_day = str(parameters.get("date"))
     if s_city == "":
 		s_city = u"Алматы"
 	
