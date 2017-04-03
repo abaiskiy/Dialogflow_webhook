@@ -10,6 +10,7 @@ from urllib.error import HTTPError
 import json
 import os
 import requests
+import cyrtranslit
 
 from flask import Flask
 from flask import request
@@ -47,7 +48,7 @@ def test(req):
                  params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'metric', 'APPID': appid})        
         #data = json.loads(rez)
         data = rez.json()
-        s = (u"кириллица").encode('utf-8')
+        s = u"кириллица"
         temp = str(data['list'][0]['main']['temp'])
         description = data['list'][0]['weather'][0]['description']
         speech = "Segodnya v "+s_city+" "+description+", temperatura "+temp + " ebanyh gradusov"
