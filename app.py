@@ -38,29 +38,22 @@ def webhook():
 
 
 def test(req):    
-    
     result = req.get("result")
     parameters = result.get("parameters")
     s_city = parameters.get("geo-city")
-	s_day = str(parameters.get("date"))
+    s_day = str(parameters.get("date"))
     if s_city == "":
 		s_city = u"Алматы"
 	
     appid = "01e9d712127bbffa4c9e669f39d3a127"
     lang = "ru"
     try:
-	
-		if s_day == "":		
-			rez = requests.get("http://api.openweathermap.org/data/2.5/find",
-					 params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'metric', 'APPID': appid}) 
-			data = rez.json()
-			temp = str(int(round(data['list'][0]['main']['temp'])))
-			description = data['list'][0]['weather'][0]['description']
-			speech = u"Сегодня в "+s_city+" "+description+ u", температура "+temp + u" °C "
-		elif: 		
-			speech = "test "
-		
-        
+	rez = requests.get("http://api.openweathermap.org/data/2.5/find",
+			 params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'metric', 'APPID': appid}) 
+	data = rez.json()
+	temp = str(int(round(data['list'][0]['main']['temp'])))
+	description = data['list'][0]['weather'][0]['description']
+	speech = u"Сегодня в "+s_city+" "+description+ u", температура "+temp + u" °C "
     except Exception as e:
         speech = u"Кажется такого города не существует..." 
         pass
