@@ -11,12 +11,11 @@ import json
 import os
 import requests
 import codecs
-from datetime import datetime
 
 from flask import Flask
 from flask import request
 from flask import make_response
-
+from datetime import datetime
 # Flask app should start in global layout
 app = Flask(__name__)
 
@@ -52,8 +51,8 @@ def test(req):
                  params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'metric', 'APPID': appid})        
         #data = json.loads(rez)
 
-		#d1 = datetime.strptime("2017-04-10", "%Y-%m-%d").date()
-		#d2 = datetime.today().date()	
+		d1 = datetime.strptime("2017-04-10", "%Y-%m-%d").date()
+		d2 = datetime.today().date()	
 	
 		data = rez.json()
         temp = str(int(round(data['list'][0]['main']['temp'])))
