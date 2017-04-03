@@ -50,7 +50,7 @@ def test(req):
                  params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'metric', 'APPID': appid})        
         #data = json.loads(rez)
         data = rez.json()
-        temp = str(round(data['list'][0]['main']['temp']))
+        temp = str(int(round(data['list'][0]['main']['temp'])))
         description = data['list'][0]['weather'][0]['description']
         speech = u"Сегодня в "+s_city+" "+description+ u", температура "+temp + u" °C"
         
