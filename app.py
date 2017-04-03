@@ -11,6 +11,7 @@ import json
 import os
 import requests
 import codecs
+from datetime import date, datetime
 
 from flask import Flask
 from flask import request
@@ -49,8 +50,6 @@ def test(req):
     try:
         rez = requests.get("http://api.openweathermap.org/data/2.5/find",
                  params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'metric', 'APPID': appid})        
-        #data = json.loads(rez)
-
 		d1 = datetime.strptime("2017-04-10", "%Y-%m-%d").date()
 		d2 = datetime.today().date()	
 	
