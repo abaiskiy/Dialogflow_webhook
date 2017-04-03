@@ -11,11 +11,12 @@ import json
 import os
 import requests
 import codecs
+import datetime
 
 from flask import Flask
 from flask import request
 from flask import make_response
-from datetime import datetime
+
 # Flask app should start in global layout
 app = Flask(__name__)
 
