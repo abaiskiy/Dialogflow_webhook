@@ -50,7 +50,7 @@ def test(req):
         data = rez.json()
         temp = str(data['list'][0]['main']['temp'])
         description = data['list'][0]['weather'][0]['description']
-        speech = u"Сегодня в "+s_city+" "+description+", температура "+temp + " градусов"
+        speech = u"Сегодня в "+s_city+" "+description+ u", температура "+temp + u" градусов"
         
     except Exception as e:
         speech = "Houston we have problem " + str(e)
