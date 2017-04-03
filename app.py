@@ -48,7 +48,7 @@ def test(req):
     appid = "01e9d712127bbffa4c9e669f39d3a127"
     lang = "ru"
     try:
-	if s_city == "":	
+	if s_day == "":	
 		rez = requests.get("http://api.openweathermap.org/data/2.5/find",
 				 params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'metric', 'APPID': appid}) 
 		data = rez.json()
@@ -56,8 +56,7 @@ def test(req):
 		description = data['list'][0]['weather'][0]['description']
 		speech = u"Сегодня в "+s_city+" "+description+ u", температура "+temp + u" °C "
 	elif:
-		speech = "HUINYA "
-	
+		speech = "HUINYA "	
     except Exception as e:
         speech = u"Кажется такого города не существует..." 
         pass
