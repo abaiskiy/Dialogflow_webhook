@@ -57,16 +57,8 @@ def test(req):
 			temp = str(int(round(data['list'][0]['main']['temp'])))
 			description = data['list'][0]['weather'][0]['description']
 			speech = u"Сегодня в "+s_city+" "+description+ u", температура "+temp + u" °C "
-		elif 		
-			d1 = datetime.strptime(s_day, "%Y-%m-%d").date()
-			d2 = datetime.today().date()	
-			cnt = (d1-d2).days
-			rez = requests.get("http://api.openweathermap.org/data/2.5/forecast/daily",
-					 params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'metric', 'APPID': appid, 'cnt': cnt})        
-			data = rez.json()
-			temp = str(int(round(data['list'][cnt-1]['temp']['day'])))
-			description = data['list'][cnt-1]['weather'][0]['description']
-			speech = u"Погода на " + s_day +u" в " +s_city+": "+description+ u", температура "+temp + u" °C "
+		elif: 		
+			speech = "test "
 		
         
     except Exception as e:
