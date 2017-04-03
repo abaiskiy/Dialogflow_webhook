@@ -49,12 +49,7 @@ def test(req):
     lang = "ru"
     try:
 	if s_day == "":	
-		rez = requests.get("http://api.openweathermap.org/data/2.5/find",
-				 params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'metric', 'APPID': appid}) 
-		data = rez.json()
-		temp = str(int(round(data['list'][0]['main']['temp'])))
-		description = data['list'][0]['weather'][0]['description']
-		speech = u"Сегодня в "+s_city+" "+description+ u", температура "+temp + u" °C "
+		speech = "NE HUINYA"
 	elif:
 		speech = "HUINYA "	
     except Exception as e:
