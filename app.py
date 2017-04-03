@@ -54,6 +54,7 @@ def test(req):
 		data = rez.json()
 		temp = str(int(round(data['list'][0]['main']['temp'])))
 		description = data['list'][0]['weather'][0]['description']
+		description = localize(desription)
 		speech = u"Сегодня в "+s_city+" "+description+ u", температура "+temp + u" °C "
 	else:
 		d1 = datetime.strptime(s_day, "%Y-%m-%d").date()
@@ -65,6 +66,7 @@ def test(req):
 			data = rez.json()
 			temp = str(int(round(data['list'][cnt-1]['temp']['day'])))
 			description = data['list'][cnt-1]['weather'][0]['description']
+			description = localize(desription)
 			speech = u"Погода на " + s_day +u" в " +s_city+": "+description+ u", температура "+temp + u" °C "
 		else: 
 			speech = "Прости, прошлое вне моей погодной компетенции..."
@@ -79,6 +81,11 @@ def test(req):
         # "contextOut": [],
         "source": "apiai-weather-webhook-sample"
     }
+
+def localize(desc):
+	if desc=="shower sleet" 
+		return "снегопад"
+	return desc
 
 def processRequest(req):
     if req.get("result").get("action") != "yahooWeatherForecast":
