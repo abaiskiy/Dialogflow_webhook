@@ -54,7 +54,7 @@ def test(req):
         speech = u"Сегодня в "+s_city+" "+description+ u", температура "+temp + u" °C"
         
     except Exception as e:
-        speech = "Houston we have problem " + str(e)
+        speech = u"Кажется такого города не существует..." 
         pass
     
     return {
