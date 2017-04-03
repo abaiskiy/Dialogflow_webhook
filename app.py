@@ -83,7 +83,7 @@ def test(req):
     }
 
 def localize(desc):
-	if desc=="shower sleet" 
+	if desc=="shower sleet":
 		return "снегопад"
 	return desc
 
