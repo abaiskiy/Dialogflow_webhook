@@ -11,6 +11,7 @@ import json
 import os
 import requests
 import codecs
+
 from datetime import datetime
 
 from flask import Flask
@@ -41,22 +42,32 @@ def test(req):
     result = req.get("result")
     parameters = result.get("parameters")
     s_city = parameters.get("geo-city")
-	#s_day = str(parameters.get("date"))
+	s_day = str(parameters.get("date"))
     if s_city == "":
 		s_city = u"Алматы"
 	
     appid = "01e9d712127bbffa4c9e669f39d3a127"
     lang = "ru"
     try:
-        rez = requests.get("http://api.openweathermap.org/data/2.5/find",
-                 params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'metric', 'APPID': appid})        
-	d1 = datetime.strptime("2017-04-10", "%Y-%m-%d").date()
-	d2 = datetime.today().date()	
 	
-	data = rez.json()
-        temp = str(int(round(data['list'][0]['main']['temp'])))
-        description = data['list'][0]['weather'][0]['description']
-        speech = u"Сегодня в "+s_city+" "+description+ u", температура "+temp + u" °C " + str((d1-d2).days)
+		if s_day == "":		
+			rez = requests.get("http://api.openweathermap.org/data/2.5/find",
+					 params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'metric', 'APPID': appid}) 
+			data = rez.json()
+			temp = str(int(round(data['list'][0]['main']['temp'])))
+			description = data['list'][0]['weather'][0]['description']
+			speech = u"Сегодня в "+s_city+" "+description+ u", температура "+temp + u" °C "
+		elif 		
+			d1 = datetime.strptime(s_day, "%Y-%m-%d").date()
+			d2 = datetime.today().date()	
+			cnt = (d1-d2).days
+			rez = requests.get("http://api.openweathermap.org/data/2.5/forecast/daily",
+					 params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'metric', 'APPID': appid, 'cnt': cnt})        
+			data = rez.json()
+			temp = str(int(round(data['list'][cnt-1]['temp']['day'])))
+			description = data['list'][cnt-1]['weather'][0]['description']
+			speech = u"Погода на " + s_day +u" в " +s_city+": "+description+ u", температура "+temp + u" °C "
+		
         
     except Exception as e:
         speech = u"Кажется такого города не существует..." 
