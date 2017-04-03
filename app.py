@@ -62,7 +62,7 @@ def test(req):
 		cnt = (d1-d2).days
 		if cnt>=0 and cnt<17:
 			rez = requests.get("http://api.openweathermap.org/data/2.5/forecast/daily",
-					params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'metric', 'APPID': appid, 'cnt': cnt})        
+					params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'metric', 'APPID': appid, 'cnt': cnt+1})        
 			data = rez.json()
 			temp = str(int(round(data['list'][cnt-1]['temp']['day'])))
 			description = data['list'][cnt]['weather'][0]['description']
