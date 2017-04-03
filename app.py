@@ -51,15 +51,7 @@ def test(req):
         temp = str(data['list'][0]['main']['temp'])
         description = data['list'][0]['weather'][0]['description']
 		
-		grade = "test"
-		if abs(temp)%10==1 and abs(temp)!=11:
-			grade = u" градус"
-		elif abs(temp)%10>1 and abs(temp)%10<4:
-			grade = u" градуса"
-		else:
-			grade = u" градусов"
-		
-        speech = u"Сегодня в "+s_city+" "+description+ u", температура "+temp + grade
+        speech = u"Сегодня в "+s_city+" "+description+ u", температура "+temp + u" °C"
         
     except Exception as e:
         speech = "Houston we have problem " + str(e)
