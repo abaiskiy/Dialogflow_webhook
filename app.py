@@ -11,6 +11,7 @@ import json
 import os
 import requests
 import codecs
+import datetime
 
 from flask import Flask
 from flask import request
@@ -40,6 +41,7 @@ def test(req):
     result = req.get("result")
     parameters = result.get("parameters")
     s_city = parameters.get("geo-city")
+	s_day = parameters.get("date")
     if s_city == "":
 		s_city = u"Алматы"
 	
@@ -49,10 +51,16 @@ def test(req):
         rez = requests.get("http://api.openweathermap.org/data/2.5/find",
                  params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'metric', 'APPID': appid})        
         #data = json.loads(rez)
-        data = rez.json()
+        
+		
+		d1 = datetime.datetime.strptime(s_day, "%Y-%m-%d").date()
+		d2 = datetime.datetime.today().date()	
+		
+		
+		data = rez.json()
         temp = str(int(round(data['list'][0]['main']['temp'])))
         description = data['list'][0]['weather'][0]['description']
-        speech = u"Сегодня в "+s_city+" "+description+ u", температура "+temp + u" °C"
+        speech = u"Сегодня в "+s_city+" "+description+ u", температура "+temp + u" °C " + (d1-d2).days 
         
     except Exception as e:
         speech = u"Кажется такого города не существует..." 
