@@ -12,7 +12,7 @@ import os
 import requests
 import codecs
 
-
+from math import round
 from flask import Flask
 from flask import request
 from flask import make_response
@@ -54,7 +54,9 @@ def test(req):
         temp = str(data['list'][0]['main']['temp'])
         description = data['list'][0]['weather'][0]['description']
 		
-        speech = u"Сегодня в "+s_city+" "+description+ u", температура "+temp + u" °C"
+		x = round(13.4)
+		
+        speech = u"Сегодня в "+s_city+" "+description+ u", температура "+temp + u" °C" + x
         
     except Exception as e:
         speech = u"Кажется такого города не существует..." 
