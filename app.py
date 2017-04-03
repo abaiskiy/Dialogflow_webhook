@@ -50,10 +50,10 @@ def test(req):
     try:
         rez = requests.get("http://api.openweathermap.org/data/2.5/find",
                  params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'metric', 'APPID': appid})        
-		d1 = datetime.strptime("2017-04-10", "%Y-%m-%d").date()
-		d2 = datetime.today().date()	
+	d1 = datetime.strptime("2017-04-10", "%Y-%m-%d").date()
+	d2 = datetime.today().date()	
 	
-		data = rez.json()
+	data = rez.json()
         temp = str(int(round(data['list'][0]['main']['temp'])))
         description = data['list'][0]['weather'][0]['description']
         speech = u"Сегодня в "+s_city+" "+description+ u", температура "+temp + u" °C "
