@@ -60,7 +60,7 @@ def test(req):
 		d1 = datetime.strptime(s_day, "%Y-%m-%d").date()
 		d2 = datetime.today().date()	
 		cnt = (d1-d2).days
-		if cnt>=0:
+		if cnt>=0 and cnt<17:
 			rez = requests.get("http://api.openweathermap.org/data/2.5/forecast/daily",
 					params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'metric', 'APPID': appid, 'cnt': cnt})        
 			data = rez.json()
@@ -68,8 +68,10 @@ def test(req):
 			description = data['list'][cnt-1]['weather'][0]['description']
 			description = localize(description)
 			speech = u"Погода на " + s_day +u" в " +s_city+": "+description+ u", температура "+temp + u" °C "
-		else: 
-			speech = "Прости, прошлое вне моей погодной компетенции..."
+		elif cnt>16: 
+			speech = u"Так далеко я не могу предсказать."
+		else:
+			speech = u"Прости, прошлое вне моей погодной компетенции..."
     except Exception as e:
         speech = u"Кажется такого города не существует..." + str(e)
         pass
