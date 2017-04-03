@@ -53,7 +53,7 @@ def test(req):
 		
 		if abs(temp)%10==1 and abs(temp)!=11:
 			grade = u" градус"
-		elif abs(temp)%10>1 and abs(temp)%10<4 and (abs(temp)<10 or abs(temp)>14):
+		elif abs(temp)%10>1 and abs(temp)%10<4:
 			grade = u" градуса"
 		else:
 			grade = u" градусов"
