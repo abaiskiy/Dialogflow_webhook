@@ -12,7 +12,7 @@ import os
 import requests
 import codecs
 
-from math import round
+
 from flask import Flask
 from flask import request
 from flask import make_response
@@ -51,7 +51,7 @@ def test(req):
                  params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'metric', 'APPID': appid})        
         #data = json.loads(rez)
         data = rez.json()
-        temp = round(str(data['list'][0]['main']['temp']))
+        temp = str(data['list'][0]['main']['temp'])
         description = data['list'][0]['weather'][0]['description']
 		
         speech = u"Сегодня в "+s_city+" "+description+ u", температура "+temp + u" °C"
