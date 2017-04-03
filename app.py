@@ -40,7 +40,9 @@ def test(req):
     result = req.get("result")
     parameters = result.get("parameters")
     s_city = parameters.get("geo-city")
-    
+    if s_city == "":
+		s_city = u"Алматы"
+	
     appid = "01e9d712127bbffa4c9e669f39d3a127"
     lang = "ru"
     try:
