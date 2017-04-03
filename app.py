@@ -48,10 +48,7 @@ def test(req):
     appid = "01e9d712127bbffa4c9e669f39d3a127"
     lang = "ru"
     try:
-	if s_day == "":	
-		speech = "NE HUINYA"
-	elif:
-		speech = "HUINYA "	
+	speech = "HUINYA"	
     except Exception as e:
         speech = u"Кажется такого города не существует..." 
         pass
