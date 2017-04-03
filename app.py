@@ -10,7 +10,7 @@ from urllib.error import HTTPError
 import json
 import os
 import requests
-import cyrtranslit
+import codecs
 
 from flask import Flask
 from flask import request
