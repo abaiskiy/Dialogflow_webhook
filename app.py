@@ -11,7 +11,6 @@ import json
 import os
 import requests
 import codecs
-import datetime
 
 from flask import Flask
 from flask import request
