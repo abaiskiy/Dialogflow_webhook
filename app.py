@@ -58,7 +58,7 @@ def test(req):
 		data = rez.json()
         temp = str(int(round(data['list'][0]['main']['temp'])))
         description = data['list'][0]['weather'][0]['description']
-        speech = u"Сегодня в "+s_city+" "+description+ u", температура "+temp + u" °C " + str((d1-d2).days) 
+        speech = u"Сегодня в "+s_city+" "+description+ u", температура "+temp + u" °C "
         
     except Exception as e:
         speech = u"Кажется такого города не существует..." 
