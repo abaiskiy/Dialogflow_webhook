@@ -84,7 +84,7 @@ def test(req):
 
 def localize(desc):
 	if desc=="shower sleet":
-		return "снегопад"
+		return u"снегопад"
 	return desc
 
 def processRequest(req):
