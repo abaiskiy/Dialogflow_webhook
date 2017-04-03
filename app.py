@@ -11,7 +11,6 @@ import json
 import os
 import requests
 import codecs
-import datetime as dt
 from datetime import datetime
 
 from flask import Flask
@@ -53,8 +52,8 @@ def test(req):
                  params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'metric', 'APPID': appid})        
         #data = json.loads(rez)
 
-		d1 = dt.datetime.strptime("2017-04-10", "%Y-%m-%d").date()
-		d2 = dt.datetime.today().date()	
+		d1 = datetime.datetime.strptime("2017-04-10", "%Y-%m-%d").date()
+		d2 = datetime.datetime.today().date()	
 	
 		data = rez.json()
         temp = str(int(round(data['list'][0]['main']['temp'])))
