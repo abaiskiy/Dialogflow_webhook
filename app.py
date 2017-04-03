@@ -49,11 +49,6 @@ def test(req):
         data = rez.json()
         temp = str(data['list'][0]['main']['temp'])
         description = data['list'][0]['weather'][0]['description']
-
-        u = "Кириллица"
-        uu = u.decode('utf8')
-        s = uu.encode('cp1250')
-        
         speech = "Segodnya v "+s_city+" "+description+", temperatura "+temp + " ebanyh gradusov" + s
         
     except Exception as e:
