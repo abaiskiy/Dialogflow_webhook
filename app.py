@@ -71,7 +71,7 @@ def test(req):
 		else: 
 			speech = "Прости, прошлое вне моей погодной компетенции..."
     except Exception as e:
-        speech = u"Кажется такого города не существует..." 
+        speech = u"Кажется такого города не существует..." + str(e)
         pass
     
     return {
