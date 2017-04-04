@@ -61,7 +61,7 @@ def test(req):
 		d2 = datetime.today().date()	
 		cnt = (d1-d2).days
 
-        s_day = localizeDay(d1.strftime("%a"))
+        #s_day = localizeDay(d1.strftime("%a"))
         s_date = d1.strftime("%d.%m.%Y")
 
 		if cnt>=0 and cnt<17:
@@ -71,7 +71,7 @@ def test(req):
 			temp = str(int(round(data['list'][cnt-1]['temp']['day'])))
 			description = data['list'][cnt]['weather'][0]['description']
 			description = localize(description)
-			speech = u"Погода на " + s_day +", "+s_date+u" в " +s_city+": "+description+ u", температура "+temp + u" °C "
+			speech = u"Погода на " + s_date +  u" в " +s_city+": "+description+ u", температура "+temp + u" °C "
 		elif cnt>16: 
 			speech = u"Так далеко я не могу предсказать."
 		else:
