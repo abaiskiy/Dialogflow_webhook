@@ -49,9 +49,9 @@ def test(req):
     lang = "ru"
     try:
 	if s_day == "":
-		rez = requests.get("http://api.openweathermap.org/data/2.5/find",
+		res = requests.get("http://api.openweathermap.org/data/2.5/find",
 				params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'metric', 'APPID': appid}) 
-		data = rez.json()
+		data = res.json()
 		temp = str(int(round(data['list'][0]['main']['temp'])))
 		description = data['list'][0]['weather'][0]['description']
 		description = localize(description)
@@ -60,20 +60,24 @@ def test(req):
 		d1 = datetime.strptime(s_day, "%Y-%m-%d").date()
 		d2 = datetime.today().date()	
 		cnt = (d1-d2).days
+
+        s_day = localizeDay(d1.strftime("%a"))
+        s_date = d.strftime("%d.%m.%Y")
+
 		if cnt>=0 and cnt<17:
-			rez = requests.get("http://api.openweathermap.org/data/2.5/forecast/daily",
+			res = requests.get("http://api.openweathermap.org/data/2.5/forecast/daily",
 					params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'metric', 'APPID': appid, 'cnt': cnt+1})        
-			data = rez.json()
+			data = res.json()
 			temp = str(int(round(data['list'][cnt-1]['temp']['day'])))
 			description = data['list'][cnt]['weather'][0]['description']
 			description = localize(description)
-			speech = u"Погода на " + s_day +u" в " +s_city+": "+description+ u", температура "+temp + u" °C "
+			speech = u"Погода на " + s_day +", "+s_date+u" в " +s_city+": "+description+ u", температура "+temp + u" °C "
 		elif cnt>16: 
 			speech = u"Так далеко я не могу предсказать."
 		else:
 			speech = u"Прости, прошлое вне моей погодной компетенции..."
     except Exception as e:
-        speech = u"Кажется такого города не существует..." + str(e)
+        speech = u"Кажется такого города не существует..."
         pass
     
     return {
@@ -88,6 +92,24 @@ def localize(desc):
 	if desc=="shower sleet":
 		return u"снегопад"
 	return desc
+
+def localizeDay(day):
+    if day=="Mon":
+        return u"Понедельник"
+    elif day=="Tue":
+        return u"Вторник"
+    elif day=="Wed":
+        return u"Среда"
+    elif day=="Thu":
+        return u"Четверг"
+    elif day=="Fri":
+        return u"Пятница"
+    elif day=="Sat":
+        return u"Суббота"
+    elif day=="Sun":
+        return u"Воскресенье"
+    else:
+        return u"Нет такого дня"
 
 def processRequest(req):
     if req.get("result").get("action") != "yahooWeatherForecast":
