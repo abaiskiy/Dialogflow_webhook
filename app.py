@@ -64,6 +64,7 @@ def test(req):
         #s_day = datetime.strptime(s_day, "%Y-%m-%d").strftime("%a")
         #s_day = localizeDay(d1.strftime("%a"))
         #s_date = d1.strftime("%d.%m.%Y")
+        s_day = localizeDay(d1.weekday())
 
 		if cnt>=0 and cnt<17:
 			res = requests.get("http://api.openweathermap.org/data/2.5/forecast/daily",
@@ -95,19 +96,19 @@ def localize(desc):
 	return desc
 
 def localizeDay(day):
-    if day=="Mon":
+    if day=="Mon" or day==0:
         return u"Понедельник"
-    elif day=="Tue":
+    elif day=="Tue" or day==1:
         return u"Вторник"
-    elif day=="Wed":
+    elif day=="Wed" or day==2:
         return u"Среда"
-    elif day=="Thu":
+    elif day=="Thu" or day==3:
         return u"Четверг"
-    elif day=="Fri":
+    elif day=="Fri" or day==4:
         return u"Пятница"
-    elif day=="Sat":
+    elif day=="Sat" or day==5:
         return u"Суббота"
-    elif day=="Sun":
+    elif day=="Sun" or day==6:
         return u"Воскресенье"
     return u"Нет такого дня"
 
