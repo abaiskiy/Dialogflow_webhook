@@ -61,7 +61,7 @@ def test(req):
 		d2 = datetime.today().date()	
 		cnt = (d1-d2).days
 
-        s_day = localizeDay(d1.strftime("%a"))
+        #s_day = localizeDay(d1.strftime("%a"))
         #s_date = d1.strftime("%d.%m.%Y")
 
 
