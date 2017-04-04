@@ -62,7 +62,7 @@ def test(req):
 		cnt = (d1-d2).days
 
         s_day = localizeDay(str(d1.strftime("%a")))
-        s_date = str(d.strftime("%d.%m.%Y"))
+        s_date = str(d1.strftime("%d.%m.%Y"))
 
 		if cnt>=0 and cnt<17:
 			res = requests.get("http://api.openweathermap.org/data/2.5/forecast/daily",
@@ -77,7 +77,7 @@ def test(req):
 		else:
 			speech = u"Прости, прошлое вне моей погодной компетенции..."
     except Exception as e:
-        speech = u"Кажется такого города не существует..."
+        speech = u"Кажется такого города не существует..." + str(e)
         pass
     
     return {
