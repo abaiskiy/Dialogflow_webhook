@@ -62,7 +62,10 @@ def test(req):
 		cnt = (d1-d2).days
 
         #s_day = localizeDay(d1.strftime("%a"))
-        s_date = d1.strftime("%d.%m.%Y")
+        try:
+            s_date = d1.strftime("%d.%m.%Y")
+        except Exception as x:
+            s_date = "Trouble " + str(x)
 
 		if cnt>=0 and cnt<17:
 			res = requests.get("http://api.openweathermap.org/data/2.5/forecast/daily",
