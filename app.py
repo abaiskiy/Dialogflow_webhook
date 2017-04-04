@@ -13,7 +13,6 @@ import requests
 import codecs
 
 from datetime import datetime
-import time
 
 from flask import Flask
 from flask import request
