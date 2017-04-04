@@ -61,8 +61,9 @@ def test(req):
 		d2 = datetime.today().date()	
 		cnt = (d1-d2).days
 
-        s_day = localizeDay(d1.strftime("%a"))
-        s_date = d1.strftime("%d.%m.%Y")
+        s_day = datetime.strptime(s_day, "%Y-%m-%d").strftime("%a")
+        #s_day = localizeDay(d1.strftime("%a"))
+        #s_date = d1.strftime("%d.%m.%Y")
 
 		if cnt>=0 and cnt<17:
 			res = requests.get("http://api.openweathermap.org/data/2.5/forecast/daily",
