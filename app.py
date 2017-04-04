@@ -61,11 +61,9 @@ def test(req):
 		d2 = datetime.today().date()	
 		cnt = (d1-d2).days
 
-        #s_day = localizeDay(d1.strftime("%a"))
-        try:
-            s_date = d1.strftime("%d.%m.%Y")
-        except Exception as x:
-            s_date = "Trouble " + str(x)
+        s_day = localizeDay(d1.strftime("%a"))
+        #s_date = d1.strftime("%d.%m.%Y")
+
 
 		if cnt>=0 and cnt<17:
 			res = requests.get("http://api.openweathermap.org/data/2.5/forecast/daily",
@@ -74,7 +72,7 @@ def test(req):
 			temp = str(int(round(data['list'][cnt-1]['temp']['day'])))
 			description = data['list'][cnt]['weather'][0]['description']
 			description = localize(description)
-			speech = u"Погода на " + s_date +  u" в " +s_city+": "+description+ u", температура "+temp + u" °C "
+			speech = u"Погода на " + s_day +  u" в " +s_city+": "+description+ u", температура "+temp + u" °C "
 		elif cnt>16: 
 			speech = u"Так далеко я не могу предсказать."
 		else:
