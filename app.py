@@ -66,6 +66,7 @@ def test(req):
             s_day = localizeDay(d1.strftime("%a"))
         except Exception as x:
             print(str(x))
+            sys.stdout.flush()
             pass
         #s_date = d1.strftime("%d.%m.%Y")
         
