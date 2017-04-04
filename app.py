@@ -61,8 +61,8 @@ def test(req):
 		d2 = datetime.today().date()	
 		cnt = (d1-d2).days
 
-        s_day = localizeDay(d1.strftime("%a"))
-        s_date = d.strftime("%d.%m.%Y")
+        s_day = localizeDay(str(d1.strftime("%a")))
+        s_date = str(d.strftime("%d.%m.%Y"))
 
 		if cnt>=0 and cnt<17:
 			res = requests.get("http://api.openweathermap.org/data/2.5/forecast/daily",
@@ -108,8 +108,7 @@ def localizeDay(day):
         return u"Суббота"
     elif day=="Sun":
         return u"Воскресенье"
-    else:
-        return u"Нет такого дня"
+    return u"Нет такого дня"
 
 def processRequest(req):
     if req.get("result").get("action") != "yahooWeatherForecast":
