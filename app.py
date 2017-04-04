@@ -64,11 +64,7 @@ def test(req):
         #s_day = datetime.strptime(s_day, "%Y-%m-%d").strftime("%a")
         #s_day = localizeDay(d1.strftime("%a"))
         #s_date = d1.strftime("%d.%m.%Y")
-        try:
-            s_day = localizeDay(d1.weekday())
-        except Exception as x:
-            s_day = "FAULT" + str(x)
-
+        
 		if cnt>=0 and cnt<17:
 			res = requests.get("http://api.openweathermap.org/data/2.5/forecast/daily",
 					params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'metric', 'APPID': appid, 'cnt': cnt+1})        
