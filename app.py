@@ -13,7 +13,7 @@ import requests
 import codecs
 
 from datetime import datetime
-#from time import strftime
+import time
 
 from flask import Flask
 from flask import request
@@ -62,8 +62,8 @@ def test(req):
 		d2 = datetime.today().date()	
 		cnt = (d1-d2).days
 
-        #s_day = localizeDay(d1.strftime("%a"))
-        #s_date = d1.strftime("%d.%m.%Y")
+        s_day = localizeDay(d1.strftime("%a"))
+        s_date = d1.strftime("%d.%m.%Y")
 
 		if cnt>=0 and cnt<17:
 			res = requests.get("http://api.openweathermap.org/data/2.5/forecast/daily",
