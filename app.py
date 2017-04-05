@@ -74,7 +74,7 @@ def test(req):
 			res = requests.get("http://api.openweathermap.org/data/2.5/forecast/daily",
 					params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'metric', 'APPID': appid, 'cnt': cnt+1})        
 			data = res.json()
-			temp = str(int(round(data['list'][cnt-1]['temp']['day'])))
+			temp = str(int(round(data['list'][cnt]['temp']['day'])))
 			description = data['list'][cnt]['weather'][0]['description']
 			description = localize(description)
 			speech = u"Погода на " + s_day +  u" в " +s_city+": "+description+ u", температура "+temp + u" °C "
