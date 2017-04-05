@@ -59,17 +59,7 @@ def test(req):
 	else:
 		d1 = datetime.strptime(s_day, "%Y-%m-%d").date()
 		d2 = datetime.today().date()	
-		cnt = (d1-d2).days
-
-        #s_day = datetime.strptime(s_day, "%Y-%m-%d").strftime("%a")
-        try:
-            s_day = localizeDay(d1.strftime("%a"))
-        except Exception as x:
-            print(str(x))
-            sys.stdout.flush()
-            pass
-        #s_date = d1.strftime("%d.%m.%Y")
-        
+		cnt = (d1-d2).days        
 		if cnt>=0 and cnt<17:
 			res = requests.get("http://api.openweathermap.org/data/2.5/forecast/daily",
 					params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'metric', 'APPID': appid, 'cnt': cnt+1})        
