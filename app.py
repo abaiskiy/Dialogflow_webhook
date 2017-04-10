@@ -54,7 +54,7 @@ def test(req):
 		data = res.json()
 		temp = str(int(round(data['list'][0]['main']['temp'])))
 		description = data['list'][0]['weather'][0]['description']
-		description = localize(description)
+		description = localize(description, temp)
 		speech = u"Сегодня в "+s_city+" "+description+ u", температура "+temp + u" °C "
 	else:
 		d1 = datetime.strptime(s_day, "%Y-%m-%d").date()
