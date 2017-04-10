@@ -43,36 +43,35 @@ def test(req):
     s_city = parameters.get("geo-city")
     s_day = str(parameters.get("date"))
     if s_city == "":
-		s_city = u"Алматы"
-	
+        s_city = u"Алматы"
+    
     appid = "01e9d712127bbffa4c9e669f39d3a127"
     lang = "ru"
     try:
-	if s_day == "":
-		res = requests.get("http://api.openweathermap.org/data/2.5/find",
-				params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'metric', 'APPID': appid}) 
-		data = res.json()
-		temp = str(int(round(data['list'][0]['main']['temp'])))
-		description = data['list'][0]['weather'][0]['description']
-		description = localize(description)
-		speech = u"Сегодня в "+s_city+" "+description+ u", температура "+temp + u" °C "
-	else:
-		d1 = datetime.strptime(s_day, "%Y-%m-%d").date()
-		d2 = datetime.today().date()	
-		cnt = (d1-d2).days
-        
-		if cnt>=0 and cnt<17:
-			res = requests.get("http://api.openweathermap.org/data/2.5/forecast/daily",
-					params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'metric', 'APPID': appid, 'cnt': cnt+1})        
-			data = res.json()
-			temp = str(int(round(data['list'][cnt-1]['temp']['day'])))
-			description = data['list'][cnt-1]['weather'][0]['description']
-			description = localize(description, temp)
-			speech = u"Погода на " + s_day +  u" в " +s_city+": "+description+ u", температура "+temp + u" °C "
-		elif cnt>16: 
-			speech = u"Так далеко я не могу предсказать."
-		else:
-			speech = u"Прости, прошлое вне моей погодной компетенции..."
+    if s_day == "":
+        res = requests.get("http://api.openweathermap.org/data/2.5/find",
+                params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'metric', 'APPID': appid}) 
+        data = res.json()
+        temp = str(int(round(data['list'][0]['main']['temp'])))
+        description = data['list'][0]['weather'][0]['description']
+        description = localize(description)
+        speech = u"Сегодня в "+s_city+" "+description+ u", температура "+temp + u" °C "
+    else:
+        d1 = datetime.strptime(s_day, "%Y-%m-%d").date()
+        d2 = datetime.today().date()    
+        cnt = (d1-d2).days        
+        if cnt>=0 and cnt<17:
+            res = requests.get("http://api.openweathermap.org/data/2.5/forecast/daily",
+                    params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'metric', 'APPID': appid, 'cnt': cnt+1})        
+            data = res.json()
+            temp = str(int(round(data['list'][cnt-1]['temp']['day'])))
+            description = data['list'][cnt-1]['weather'][0]['description']
+            description = localize(description, temp)
+            speech = u"Погода на " + s_day +  u" в " +s_city+": "+description+ u", температура "+temp + u" °C "
+        elif cnt>16: 
+            speech = u"Так далеко я не могу предсказать."
+        else:
+            speech = u"Прости, прошлое вне моей погодной компетенции..."
     except Exception as e:
         speech = u"Кажется такого города не существует..." + str(e)
         pass
@@ -88,9 +87,9 @@ def test(req):
 def localize(desc, temp):
     if temp>0 and (desc==u"небольшой снегопад" or desc=u"снегопад"):
         return u"возможны осадки"
-	if desc=="shower sleet":
-		return u"снегопад"
-	return desc
+    if desc=="shower sleet":
+        return u"снегопад"
+    return desc
 
 def localizeDay(day):
     if day=="Mon" or day==0:
