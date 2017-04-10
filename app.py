@@ -85,7 +85,7 @@ def test(req):
     }
 
 def localize(desc, temp):
-    if temp>0 and (desc==u"небольшой снегопад" or desc=u"снегопад"):
+    if temp>0 and (desc==u"небольшой снегопад" or desc==u"снегопад"):
         return u"возможны осадки"
     if desc=="shower sleet":
         return u"снегопад"
