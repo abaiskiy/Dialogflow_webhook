@@ -66,7 +66,6 @@ def test(req):
             data = res.json()
             temp = str(int(round(data['list'][cnt-1]['temp']['day'])))
             description = data['list'][cnt-1]['weather'][0]['description']
-            description = localize(description, temp)
             speech = u"Погода на " + s_day +  u" в " +s_city+": "+description+ u", температура "+temp + u" °C "
         elif cnt>16: 
             speech = u"Так далеко я не могу предсказать."
@@ -84,12 +83,6 @@ def test(req):
         "source": "apiai-weather-webhook-sample"
     }
 
-def localize(desc, temp):
-    if (temp>0) and (desc=="небольшой снегопад" or desc=="снегопад"):
-        return u"возможны осадки"
-    if desc=="shower sleet":
-        return u"снегопад"
-    return desc
 
 def localizeDay(day):
     if day=="Mon" or day==0:
