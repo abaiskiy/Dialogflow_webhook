@@ -18,7 +18,7 @@ from flask import Flask
 from flask import request
 from flask import make_response
 
-# Flask app should start in global layout
+
 app = Flask(__name__)
 
 
@@ -28,60 +28,107 @@ def webhook():
     print("Request:")
     print(json.dumps(req, indent=4))
 
-    res = test(req)
-    
+    res = getService(req)
+
     res = json.dumps(res, indent=4)
     r = make_response(res)
     r.headers['Content-Type'] = 'application/json'
     return r
 
 
-def test(req):    
+def getService(req):
     result = req.get("result")
+
+    action = result.get("action")
+    if action=="weather":
+        return serviceWeather(result)
+    elif action=="translate.text":
+        return serviceTranslate(result)
+
+def serviceTranslate(result):
+
+    parameters = result.get("parameters")
+    q = parameters.get("text")
+
+    if "langCode" in parameters:
+        langCode = parameters.get("langCode")
+    else:
+        langCode = parameters.get("to").get("langCode")
+
+    # Google translate key
+    key = 'AIzaSyAhP5cBWEpmUhIOavwZ2GFlMTFdhJrwxAQ'
+    target = getLanguage(langCode)
+    format = "text"
+    url = "https://translation.googleapis.com/language/translate/v2"
+    params = {'q': q, 'format': format, 'target': target, 'key': key}
+
+    res = requests.get(url, params=params)
+    data = res.json()
+    speech = data['data']['translations'][0]['translatedText']
+
+    return {
+        "speech": speech,
+        "displayText": speech,
+        "source": "DARvis translate webhook"
+    }
+
+def getLanguage(lang):
+    if lang=="zh-CHT":
+        return "zh-CN"
+    return lang
+
+def serviceWeather(result):
+
     parameters = result.get("parameters")
     s_city = parameters.get("geo-city")
     s_day = str(parameters.get("date"))
     if s_city == "":
-		s_city = u"Алматы"
-	
+        s_city = u"Алматы"
+    isWeather = parameters.get("weather")
+
+    # OpenWeatherMap key
     appid = "01e9d712127bbffa4c9e669f39d3a127"
     lang = "ru"
-    try:
-	if s_day == "":
-		res = requests.get("http://api.openweathermap.org/data/2.5/find",
-				params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'metric', 'APPID': appid}) 
-		data = res.json()
-		temp = str(int(round(data['list'][0]['main']['temp'])))
-		description = data['list'][0]['weather'][0]['description']
-		description = localize(description, temp)
-		speech = u"Сегодня в "+s_city+" "+description+ u", температура "+temp + u" °C "
-	else:
-		d1 = datetime.strptime(s_day, "%Y-%m-%d").date()
-		d2 = datetime.today().date()	
-		cnt = (d1-d2).days
-        
-		if cnt>=0 and cnt<17:
-			res = requests.get("http://api.openweathermap.org/data/2.5/forecast/daily",
-					params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'metric', 'APPID': appid, 'cnt': cnt+1})        
-			data = res.json()
-			temp = str(int(round(data['list'][cnt]['temp']['day'])))
-			description = data['list'][cnt]['weather'][0]['description']
-			description = localize(description, temp)
-			speech = u"Погода на " + s_day +  u" в " +s_city+": "+description+ u", температура "+temp + u" °C "
-		elif cnt>16: 
-			speech = u"Так далеко я не могу предсказать."
-		else:
-			speech = u"Прости, прошлое вне моей погодной компетенции..."
-    except Exception as e:
-        speech = u"Кажется такого города не существует..." + str(e)
-        pass
-    
+
+    if isWeather!="":
+        try:
+            if s_day == "":
+                res = requests.get("http://api.openweathermap.org/data/2.5/find",
+                        params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'metric', 'APPID': appid})
+                data = res.json()
+                temp = str(int(round(data['list'][0]['main']['temp'])))
+                description = data['list'][0]['weather'][0]['description']
+                description = localize(description, temp)
+                speech = u"Сегодня в "+s_city+" "+description+ u", температура "+temp + u" °C "
+            else:
+                d1 = datetime.strptime(s_day, "%Y-%m-%d").date()
+                d2 = datetime.today().date()
+                cnt = (d1-d2).days
+
+                if cnt>=0 and cnt<16:
+                    res = requests.get("http://api.openweathermap.org/data/2.5/forecast/daily",
+                            params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'metric', 'APPID': appid, 'cnt': cnt+1})
+                    data = res.json()
+                    temp = str(int(round(data['list'][cnt]['temp']['day'])))
+                    description = data['list'][cnt]['weather'][0]['description']
+                    description = localize(description, temp)
+
+                    s_day = localizeDay(d1.strftime("%a"), d1.strftime("%d"))
+
+                    speech = u"Погода на " + s_day +  u" в " +s_city+": "+description+ u", температура "+temp + u" °C "
+                elif cnt>=16:
+                    speech = u"Так далеко я не могу предсказать."
+                else:
+                    speech = u"Прости, прошлое вне моей погодной компетенции..."
+        except Exception as e:
+            speech = u"Кажется такого города не существует"
+            pass
+    else:
+        speech = u"Я пока не до конца понимаю тебя, но я учусь"        
     return {
         "speech": speech,
         "displayText": speech,
-        # "data": data,
-        # "contextOut": [],
-        "source": "apiai-weather-webhook-sample"
+        "source": "DARvis weather webhook"
     }
 
 def localize(desc, temp):
@@ -91,21 +138,27 @@ def localize(desc, temp):
         return u"снегопад"
     return desc
 
-def localizeDay(day):
-    if day=="Mon" or day==0:
-        return u"Понедельник"
-    elif day=="Tue" or day==1:
-        return u"Вторник"
-    elif day=="Wed" or day==2:
-        return u"Среда"
-    elif day=="Thu" or day==3:
-        return u"Четверг"
-    elif day=="Fri" or day==4:
-        return u"Пятница"
-    elif day=="Sat" or day==5:
-        return u"Суббота"
-    elif day=="Sun" or day==6:
-        return u"Воскресенье"
+def localizeDay(day_of_week, day):
+
+    if day==3 or day==23:
+        day = day + u"-е"
+    else:
+        day = day + u"-ое"
+
+    if day_of_week=="Mon" or day_of_week==0:
+        return u"понедельник, " + day
+    elif day_of_week=="Tue" or day_of_week==1:
+        return u"вторник, "  + day
+    elif day_of_week=="Wed" or day_of_week==2:
+        return u"среду, "  + day
+    elif day_of_week=="Thu" or day_of_week==3:
+        return u"четверг, "  + day
+    elif day_of_week=="Fri" or day_of_week==4:
+        return u"пятницу, "  + day
+    elif day_of_week=="Sat" or day_of_week==5:
+        return u"субботу, "  + day
+    elif day_of_week=="Sun" or day_of_week==6:
+        return u"воскресенье, " + day
     return u"Нет такого дня"
 
 
