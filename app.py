@@ -81,13 +81,15 @@ def serviceWikipedia(result):
 
     titles = u'Астана'
     try:
-        res = requests.get("https://ru.wikipedia.org/w/api.php",
-                params={'format': 'json', 'action': 'query', 'prop': 'extracts', 'exintro': '', 'explaintext': '', 'titles': titles})
+        res = requests.get("https://ru.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles=%D0%90%D1%81%D1%82%D0%B0%D0%BD%D0%B0")
+        #res = requests.get("https://ru.wikipedia.org/w/api.php",
+        #        params={'format': 'json', 'action': 'query', 'prop': 'extracts', 'exintro': '', 'explaintext': '', 'titles': titles})
         data = res.json()
         speech = data
     except Exception as e:
-        print(str(e))
+        speech = "Error ska"
         pass
+
     return {
         "speech": speech,
         "displayText": speech,
