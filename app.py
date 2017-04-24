@@ -51,7 +51,7 @@ def serviceWiki(result):
 
     parameters = result.get("parameters")
     text = parameters.get("text")
-    res = requests.get("https://ru.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles="+text)
+    res = requests.get("https://ru.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exsentences=2&explaintext&titles="+text)
     data = res.json()
     speech = data['query']['pages'].values()[0]['extract']
     return {
