@@ -45,7 +45,7 @@ def getService(req):
     elif action=="translate.text":
         return serviceTranslate(result)
     elif action=="dar.wiki":
-        return serviceWiki(result)
+        return serviceWiki(result)    
 
 def serviceWiki(result):
 
@@ -59,6 +59,7 @@ def serviceWiki(result):
         "displayText": speech,
         "source": "DARvis wiki webhook"
     }
+
 
 def serviceTranslate(result):
 
