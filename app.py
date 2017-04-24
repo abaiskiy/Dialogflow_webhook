@@ -51,8 +51,8 @@ def serviceWiki(result):
 
     speech = "Zdes 4to to umnoe"
     res = requests.get("http://en.wikipedia.org/w/api.php?action=query&prop=info&format=json&titles=Hello")
-    data = res.json()
-    speech = data
+    #data = res.json()
+    speech = res.status_code
     return {
         "speech": speech,
         "displayText": speech,
