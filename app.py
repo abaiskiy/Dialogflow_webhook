@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 from __future__ import print_function
 from future.standard_library import install_aliases
 install_aliases()
@@ -44,8 +44,6 @@ def getService(req):
         return serviceWeather(result)
     elif action=="translate.text":
         return serviceTranslate(result)
-    elif action=="dar.wiki":
-        return serviceWikipedia(result)
 
 def serviceTranslate(result):
 
@@ -73,26 +71,6 @@ def serviceTranslate(result):
         "displayText": speech,
         "source": "DARvis translate webhook"
     }
-
-def serviceWikipedia(result):
-    parameters = result.get("parameters")
-    text = parameters.get("text")
-
-    try:
-        #res = requests.get("https://ru.wikipedia.org/w/api.php",
-        #        params={'format': 'json', 'action': 'query', 'prop': 'extracts', 'exintro': '', 'explaintext': '', 'titles': titles})
-        #data = res.json()
-        speech = "DOwlo"
-    except Exception as e:
-        speech = "Error ska"
-        pass
-
-    return {
-        "speech": speech,
-        "displayText": speech,
-        "source": "DARvis translate webhook"
-    }
-
 
 def getLanguage(lang):
     if lang=="zh-CHT":
