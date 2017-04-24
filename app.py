@@ -44,6 +44,17 @@ def getService(req):
         return serviceWeather(result)
     elif action=="translate.text":
         return serviceTranslate(result)
+    elif action=="dar.wiki":
+        return serviceWiki(result)
+
+def serviceWiki(result):
+
+    speech = "Zdes 4to to umnoe"
+    return {
+        "speech": speech,
+        "displayText": speech,
+        "source": "DARvis wiki webhook"
+    }
 
 def serviceTranslate(result):
 
