@@ -77,9 +77,7 @@ def serviceTranslate(result):
 def serviceWikipedia(result):
     parameters = result.get("parameters")
     text = parameters.get("text")
-    #https://ru.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles=%D0%90%D1%81%D1%82%D0%B0%D0%BD%D0%B0
 
-    titles = u'Астана'
     try:
         #res = requests.get("https://ru.wikipedia.org/w/api.php",
         #        params={'format': 'json', 'action': 'query', 'prop': 'extracts', 'exintro': '', 'explaintext': '', 'titles': titles})
