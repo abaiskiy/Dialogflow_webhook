@@ -50,9 +50,9 @@ def getService(req):
 def serviceWiki(result):
 
     speech = "Zdes 4to to umnoe"
-    res = requests.get("https://ru.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles=%D0%90%D0%BA%D1%82%D0%BE%D0%B1%D0%B5")
+    res = requests.get("https://ru.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles=Астана")
     data = res.json()
-    speech = data
+    speech = data['batchcomplete']
     return {
         "speech": speech,
         "displayText": speech,
