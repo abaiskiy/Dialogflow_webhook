@@ -52,7 +52,7 @@ def serviceWiki(result):
     speech = "Zdes 4to to umnoe"
     res = requests.get("https://ru.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles=%D0%90%D1%81%D1%82%D0%B0%D0%BD%D0%B0")
     data = res.json()
-    speech = data['query']['pages']['2473']['title']
+    speech = data['query']['pages']['2473']['extract']
     return {
         "speech": speech,
         "displayText": speech,
