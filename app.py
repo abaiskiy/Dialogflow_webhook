@@ -50,43 +50,40 @@ def getService(req):
 def makeWikiRequest(text):
 
     baseUrl = "https://ru.wikipedia.org/w/api.php"
-    params = "action=query&prop=extracts&exintro&indexpageids=true&format=json&generator=search&gsrlimit=1&exsentences=3&explaintext&gsrsearch=" + text
+    params = "?action=query&prop=extracts&exintro&indexpageids=true&format=json&generator=search&gsrlimit=1&exsentences=4&explaintext&gsrsearch=" + text
     return baseUrl + params
 
 
 
-def testMode(text):
-
+# Уменьшает возвращаемый текст до определенной длины
+def beautifyText(text, textLength):
     total = 0
     str = ""
-
     for letter in text:
         str = str + letter
         total +=1
-        if (letter=='.' and total>100):
+        if (letter=='.' and total>textLength):
           return str
-          
     return u"Что-то пошло не так..."
-
 
 
 def serviceWiki(result):
 
     parameters = result.get("parameters")
     text = parameters.get("text")
-    #req = makeWikiRequest(text)
-    res = requests.get("https://ru.wikipedia.org/w/api.php?action=query&prop=extracts&exintro&indexpageids=true&format=json&generator=search&gsrlimit=1&exsentences=3&explaintext&gsrsearch="+text)
-    #res = requests.get(req)
+    req = makeWikiRequest(text)
+    #res = requests.get("https://ru.wikipedia.org/w/api.php?action=query&prop=extracts&exintro&indexpageids=true&format=json&generator=search&gsrlimit=1&exsentences=3&explaintext&gsrsearch="+text)
+    res = requests.get(req)
     data = res.json()
     speech = data['query']['pages'].values()[0]['extract']
-
-    speech = testMode(speech)
+    speech = beautifyText(speech, 100)
 
     return {
         "speech": speech,
         "displayText": speech,
         "source": "DARvis wiki webhook"
     }
+
 
 def serviceTranslate(result):
 
