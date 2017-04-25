@@ -76,7 +76,7 @@ def serviceWiki(result):
     res = requests.get(req)
     data = res.json()
     speech = data['query']['pages'].values()[0]['extract']
-    speech = beautifyText(speech, 100)
+    speech = beautifyText(speech, 120)
 
     return {
         "speech": speech,
