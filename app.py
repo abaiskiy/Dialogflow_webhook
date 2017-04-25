@@ -64,7 +64,7 @@ def beautifyText(text, textLength):
         total +=1
         if (letter=='.' and total>textLength):
           return str
-    return u"Что-то пошло не так..."
+    return str
 
 
 def serviceWiki(result):
