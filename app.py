@@ -53,13 +53,21 @@ def makeWikiRequest(text):
     params = "action=query&prop=extracts&exintro&indexpageids=true&format=json&generator=search&gsrlimit=1&exsentences=3&explaintext&gsrsearch=" + text
     return baseUrl + params
 
+
+
 def testMode(text):
+
+    total = 0
+    str = ""
+
     for letter in text:
         str = str + letter
         total +=1
         if (letter=='.' and total>100):
           return str
     return u"Что-то пошло не так..."
+
+
 
 def serviceWiki(result):
 
