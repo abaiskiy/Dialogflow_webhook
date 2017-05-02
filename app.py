@@ -18,9 +18,7 @@ from flask import Flask
 from flask import request
 from flask import make_response
 
-
 app = Flask(__name__)
-
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
@@ -35,10 +33,9 @@ def webhook():
     r.headers['Content-Type'] = 'application/json'
     return r
 
-
+# Определяем тип запроса
 def getService(req):
     result = req.get("result")
-
     action = result.get("action")
     if action=="weather":
         return serviceWeather(result)
@@ -47,13 +44,11 @@ def getService(req):
     elif action=="dar.wiki":
         return serviceWiki(result)
 
+# Создаем запрос к Wikipedia
 def makeWikiRequest(text):
-
     baseUrl = "https://ru.wikipedia.org/w/api.php"
     params = "?action=query&prop=extracts&exintro&indexpageids=true&format=json&generator=search&gsrlimit=1&exsentences=4&explaintext&gsrsearch=" + text
     return baseUrl + params
-
-
 
 # Уменьшает возвращаемый текст до определенной длины
 def beautifyText(text, textLength):
@@ -66,13 +61,11 @@ def beautifyText(text, textLength):
           return str
     return str
 
-
+#-----Сервис энциклопедия Wikipedia-----
 def serviceWiki(result):
-
     parameters = result.get("parameters")
     text = parameters.get("text")
     req = makeWikiRequest(text)
-    #res = requests.get("https://ru.wikipedia.org/w/api.php?action=query&prop=extracts&exintro&indexpageids=true&format=json&generator=search&gsrlimit=1&exsentences=3&explaintext&gsrsearch="+text)
     res = requests.get(req)
     data = res.json()
     speech = data['query']['pages'].values()[0]['extract']
@@ -84,9 +77,8 @@ def serviceWiki(result):
         "source": "DARvis wiki webhook"
     }
 
-
+#-----Сервис Google translate-----
 def serviceTranslate(result):
-
     parameters = result.get("parameters")
     q = parameters.get("text")
 
@@ -101,7 +93,6 @@ def serviceTranslate(result):
     format = "text"
     url = "https://translation.googleapis.com/language/translate/v2"
     params = {'q': q, 'format': format, 'target': target, 'key': key}
-
     res = requests.get(url, params=params)
     data = res.json()
     speech = data['data']['translations'][0]['translatedText']
@@ -117,6 +108,7 @@ def getLanguage(lang):
         return "zh-CN"
     return lang
 
+#-----Сервис прогноза погоды OpenWeatherMap-----
 def serviceWeather(result):
     parameters = result.get("parameters")
     s_city = parameters.get("geo-city")
@@ -133,7 +125,7 @@ def serviceWeather(result):
         try:
             if s_day == "":
                 res = requests.get("http://api.openweathermap.org/data/2.5/find",
-                        params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'metric', 'APPID': appid})
+                        params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'accurate', 'APPID': appid})
                 data = res.json()
                 temp = str(int(round(data['list'][0]['main']['temp'])))
                 description = data['list'][0]['weather'][0]['description']
@@ -146,7 +138,7 @@ def serviceWeather(result):
 
                 if cnt>=0 and cnt<16:
                     res = requests.get("http://api.openweathermap.org/data/2.5/forecast/daily",
-                            params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'metric', 'APPID': appid, 'cnt': cnt+1})
+                            params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'accurate', 'APPID': appid, 'cnt': cnt+1})
                     data = res.json()
                     temp = str(int(round(data['list'][cnt]['temp']['day'])))
                     description = data['list'][cnt]['weather'][0]['description']
@@ -183,7 +175,6 @@ def localizeDay(day_of_week, day):
         day = day + u"-е"
     else:
         day = day + u"-ое"
-
     if day_of_week=="Mon" or day_of_week==0:
         return u"понедельник, " + day
     elif day_of_week=="Tue" or day_of_week==1:
