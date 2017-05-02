@@ -125,7 +125,7 @@ def serviceWeather(result):
         try:
             if s_day == "":
                 res = requests.get("http://api.openweathermap.org/data/2.5/find",
-                        params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'accurate', 'APPID': appid})
+                        params={'q': s_city, 'type': 'accurate', 'lang': lang, 'units': 'metric', 'APPID': appid})
                 data = res.json()
                 temp = str(int(round(data['list'][0]['main']['temp'])))
                 description = data['list'][0]['weather'][0]['description']
@@ -138,7 +138,7 @@ def serviceWeather(result):
 
                 if cnt>=0 and cnt<16:
                     res = requests.get("http://api.openweathermap.org/data/2.5/forecast/daily",
-                            params={'q': s_city, 'type': 'like', 'lang': lang, 'units': 'accurate', 'APPID': appid, 'cnt': cnt+1})
+                            params={'q': s_city, 'type': 'accurate', 'lang': lang, 'units': 'metric', 'APPID': appid, 'cnt': cnt+1})
                     data = res.json()
                     temp = str(int(round(data['list'][cnt]['temp']['day'])))
                     description = data['list'][cnt]['weather'][0]['description']
