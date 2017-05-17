@@ -27,8 +27,8 @@ def webhook():
     print(json.dumps(req, indent=4))
 
     res = getService(req)
-
     res = json.dumps(res, indent=4)
+
     r = make_response(res)
     r.headers['Content-Type'] = 'application/json'
     return r
@@ -47,17 +47,22 @@ def getService(req):
 # Создаем запрос к Wikipedia
 def makeWikiRequest(text):
     baseUrl = "https://ru.wikipedia.org/w/api.php"
-    params = "?action=query&prop=extracts&exintro&indexpageids=true&format=json&generator=search&gsrlimit=1&exsentences=4&explaintext&gsrsearch=" + text
+    params = "?action=query&prop=extracts&exintro&indexpageids=true&format=json&generator=search&gsrlimit=1&exsentences=6&explaintext&gsrsearch=" + text
     return baseUrl + params
 
 # Уменьшает возвращаемый текст до определенной длины
-def beautifyText(text, textLength):
+def beautifyWikiText(text, textLength):
     total = 0
+    brackets = 0
     str = ""
     for letter in text:
         str = str + letter
         total +=1
-        if (letter=='.' and total>textLength):
+        if letter=='(':
+            brackets +=1
+        if letter==')':
+            brackets -=1
+        if letter=='.'and brackets==0 and total>textLength:
           return str
     return str
 
@@ -66,16 +71,39 @@ def serviceWiki(result):
     parameters = result.get("parameters")
     text = parameters.get("text")
     req = makeWikiRequest(text)
-    res = requests.get(req)
-    data = res.json()
-    speech = data['query']['pages'].values()[0]['extract']
-    speech = beautifyText(speech, 120)
 
-    return {
-        "speech": speech,
-        "displayText": speech,
-        "source": "DARvis wiki webhook"
-    }
+    try:
+        res = requests.get(req)
+        data = res.json()
+        speech = data['query']['pages'].values()[0]['extract']
+        speech = beautifyWikiText(speech, 150)
+    except:
+        speech = u"К сожалению я не знаю ответа на этот вопрос."
+
+
+    return returnJsonFunction(speech, "wiki")
+
+
+
+
+#Функция для корректировки некоторых языков
+def getLanguage(lang):
+    if lang=="zh-CHT":
+        return "zh-CN"
+    return lang
+
+
+# Создаем запрос для Перевода текста
+def makeTranslateRequest(q, langCode):
+
+    # Google translate key
+    key = 'AIzaSyAhP5cBWEpmUhIOavwZ2GFlMTFdhJrwxAQ'
+    target = getLanguage(langCode)
+    url = "https://translation.googleapis.com/language/translate/v2?"
+    params = "q="+q+"&format=text"+"&target="+target+"&key="+key
+
+    return url+params
+
 
 #-----Сервис Google translate-----
 def serviceTranslate(result):
@@ -87,29 +115,18 @@ def serviceTranslate(result):
     else:
         langCode = parameters.get("to").get("langCode")
 
-    # Google translate key
-    key = 'AIzaSyAhP5cBWEpmUhIOavwZ2GFlMTFdhJrwxAQ'
-    target = getLanguage(langCode)
-    format = "text"
-    url = "https://translation.googleapis.com/language/translate/v2"
-    params = {'q': q, 'format': format, 'target': target, 'key': key}
-    res = requests.get(url, params=params)
+    req = makeTranslateRequest(q, langCode)
+    res = requests.get(req)
     data = res.json()
     speech = data['data']['translations'][0]['translatedText']
 
-    return {
-        "speech": speech,
-        "displayText": speech,
-        "source": "DARvis translate webhook"
-    }
+    return returnJsonFunction(speech, "translate")
 
-def getLanguage(lang):
-    if lang=="zh-CHT":
-        return "zh-CN"
-    return lang
 
-#-----Сервис прогноза погоды OpenWeatherMap-----
+
+#------NEW WEATHER SERVICE VIA GOOGLE MAPS AND OPENWEATHERMAP------------------
 def serviceWeather(result):
+
     parameters = result.get("parameters")
     s_city = parameters.get("geo-city")
     s_day = str(parameters.get("date"))
@@ -117,51 +134,120 @@ def serviceWeather(result):
         s_city = u"Алматы"
     isWeather = parameters.get("weather")
 
-    # OpenWeatherMap key
-    appid = "01e9d712127bbffa4c9e669f39d3a127"
-    lang = "ru"
-
-    if isWeather!="":
-        try:
-            if s_day == "":
-                res = requests.get("http://api.openweathermap.org/data/2.5/find",
-                        params={'q': s_city+",KZ", 'type': 'accurate', 'lang': lang, 'units': 'metric', 'APPID': appid})
-                data = res.json()
-                temp = str(int(round(data['list'][0]['main']['temp'])))
-                description = data['list'][0]['weather'][0]['description']
-                description = localize(description, temp)
-                speech = u"Сегодня в "+s_city+" "+description+ u", температура "+temp + u" °C "
-            else:
-                d1 = datetime.strptime(s_day, "%Y-%m-%d").date()
-                d2 = datetime.today().date()
-                cnt = (d1-d2).days
-
-                if cnt>=0 and cnt<16:
-                    res = requests.get("http://api.openweathermap.org/data/2.5/forecast/daily",
-                            params={'q': s_city+",KZ", 'type': 'accurate', 'lang': lang, 'units': 'metric', 'APPID': appid, 'cnt': cnt+1})
-                    data = res.json()
-                    temp = str(int(round(data['list'][cnt]['temp']['day'])))
-                    description = data['list'][cnt]['weather'][0]['description']
-                    description = localize(description, temp)
-
-                    s_day = localizeDay(d1.strftime("%a"), d1.strftime("%d"))
-
-                    speech = u"Погода на " + s_day +  u" в " +s_city+": "+description+ u", температура "+temp + u" °C "
-                elif cnt>=16:
-                    speech = u"Так далеко я не могу предсказать."
-                else:
-                    speech = u"Прости, прошлое вне моей погодной компетенции..."
-        except Exception as e:
-            speech = u"Кажется такого города не существует"
-            pass
-    else:
+    if isWeather=="":
         speech = u"Я пока не до конца понимаю тебя, но я учусь"
+        return returnJsonFunction(speech, "weather")
+
+    # *******Определяем корректное наименование города и координаты********
+    try:
+        url = "https://maps.googleapis.com/maps/api/geocode/json"
+        params = {'sensor': 'false', 'language': 'ru', 'address': s_city}
+        res = requests.get(url, params=params)
+        results = res.json()
+        response_status = results['status']
+        if response_status!="OK":
+            speech = u"Кажется такого города не существует..."
+            return returnJsonFunction(speech, "weather")
+
+        location = results['results'][0]['geometry']['location']
+        latitude = results["results"][0]["geometry"]["location"]["lat"]
+        longitude = results["results"][0]["geometry"]["location"]["lng"]
+        locality_type = results["results"][0]["address_components"][0]["types"][0]
+
+        address_components = results["results"][0]["address_components"]
+
+        isKZ = False
+        i = 0
+        for obj in address_components:
+            if results["results"][0]["address_components"][i]["short_name"] == "KZ":
+                isKZ = True
+            i = i+1
+
+        if locality_type != "locality" or isKZ==False:
+            s_city = results["results"][0]["formatted_address"]
+        else:
+            s_city = results["results"][0]["address_components"][0]["short_name"]
+
+        # OpenWeatherMap key
+        appid = "01e9d712127bbffa4c9e669f39d3a127"
+
+        if s_day == "" or len(s_day)<10:
+            #-------------Прогноз погоды на сегодня-------------------
+            res = requests.get("http://api.openweathermap.org/data/2.5/find",
+                params={'lat': latitude, 'lon': longitude, 'type': 'accurate', 'lang': 'ru', 'units': 'metric', 'APPID': appid})
+
+            data = res.json()
+            temp = str(int(round(data['list'][0]['main']['temp'])))
+            description = data['list'][0]['weather'][0]['description']
+            description = localize(description, temp)
+
+            speech = u"Сегодня в "+s_city+": "+description+ u", температура "+temp + u" °C "
+        else:
+            #---------Прогноз погоды на последующие дни--------------
+            d1 = datetime.strptime(s_day, "%Y-%m-%d").date()
+            d2 = datetime.today().date()
+            cnt = (d1-d2).days
+
+            if cnt>=0 and cnt<16:
+                res = requests.get("http://api.openweathermap.org/data/2.5/forecast/daily",
+                        params={'lat': latitude, 'lon': longitude, 'type': 'accurate', 'lang': 'ru', 'units': 'metric', 'APPID': appid, 'cnt': cnt+1})
+                data = res.json()
+                temp = str(int(round(data['list'][cnt]['temp']['day'])))
+                description = data['list'][cnt]['weather'][0]['description']
+                description = localize(description, temp)
+
+                s_day = localizeDay(d1.strftime("%a"), d1.strftime("%d"))
+                speech = u"Погода на " + s_day +  u" в " +s_city+": "+description+ u", температура "+temp + u" °C "
+            elif cnt>=16:
+                speech = u"Так далеко я не могу предсказать."
+            else:
+                speech = u"Прости, прошлое вне моей погодной компетенции..."
+
+    except Exception as E:
+        print("Error in weather webhook: " + str(E))
+        pass
+
+    return returnJsonFunction(speech, "weather")
+#-------------------------------------------------------------------------------
+
+# заворачиваем ответ с кнопками в JSON
+def returnJsonFunction(speech, source):
     return {
         "speech": speech,
         "displayText": speech,
-        "source": "DARvis weather webhook"
+        "source": source,
+        "messages": [
+            {
+            "type": 0,
+            "speech": speech
+            },
+        {
+        "type": 4,
+        "payload": {
+            "chatControl": {
+                "chatButtons": {
+                    "buttons": [
+                      {
+                        "title": "Список команд",
+                        "command": "Список команд"
+                      },
+                      {
+                        "title": "👍",
+                        "command": "👍"
+                      },
+                      {
+                        "title": "👎",
+                        "command": "👎"
+                      }
+                ]
+            }
+        }
+        }
+        }
+        ]
     }
 
+#--------------- костыль----------спасибо OpenWeatherMap
 def localize(desc, temp):
     if (temp>0) and (desc==u"небольшой снегопад" or desc==u"снегопад"):
         return u"возможны осадки"
@@ -170,8 +256,8 @@ def localize(desc, temp):
     return desc
 
 def localizeDay(day_of_week, day):
-
-    if day==3 or day==23:
+    day = str(int(day))
+    if day=="3" or day=="23":
         day = day + u"-е"
     else:
         day = day + u"-ое"
