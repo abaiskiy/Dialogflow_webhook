@@ -78,7 +78,7 @@ def serviceWiki(result):
         speech = data['query']['pages'].values()[0]['extract']
         speech = beautifyWikiText(speech, 150)
     except:
-        speech = u"К сожалению, я пока не знаю ответ на этот вопрос 😩"
+        speech = u"К сожалению, я пока не знаю ответ на этот вопрос 😕"
 
 
     return returnJsonFunction(speech, "wiki")
