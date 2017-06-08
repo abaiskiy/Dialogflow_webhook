@@ -80,7 +80,6 @@ def serviceWiki(result):
     except:
         speech = u"К сожалению, я пока не знаю ответ на этот вопрос 😕"
 
-
     return returnJsonFunction(speech, "wiki")
 
 
@@ -124,6 +123,65 @@ def serviceTranslate(result):
 
 
 
+#--------------Погода на сегодня------------------------------------------------
+def getWeatherSpeechToday(s_city, latitude, longitude, appid):
+
+    res = requests.get("http://api.openweathermap.org/data/2.5/find",
+        params={'lat': latitude, 'lon': longitude, 'type': 'accurate', 'lang': 'ru', 'units': 'metric', 'APPID': appid})
+    data = res.json()
+    temp = str(int(round(data['list'][0]['main']['temp'])))
+    description = data['list'][0]['weather'][0]['description']
+    description = localize(description, temp)
+
+    return u"Сегодня в "+s_city+": "+description+ u", температура "+temp + u" °C "
+
+
+#-------------Погода на другие дни----------------------------------------------
+def getWeatherSpeech(s_city, latitude, longitude, appid, cnt):
+    res = requests.get("http://api.openweathermap.org/data/2.5/forecast/daily",
+            params={'lat': latitude, 'lon': longitude, 'type': 'accurate', 'lang': 'ru', 'units': 'metric', 'APPID': appid, 'cnt': cnt+1})
+    data = res.json()
+    temp = str(int(round(data['list'][cnt]['temp']['day'])))
+    description = data['list'][cnt]['weather'][0]['description']
+    description = localize(description, temp)
+    s_day = localizeDay(d1.strftime("%a"), d1.strftime("%d"))
+
+    return u"Погода на " + s_day +  u" в " +s_city+": "+description+ u", температура "+temp + u" °C "
+
+
+#-------------Достаем корректное название города с Google response--------------
+
+def getWeatherCity(s_city):
+
+    url = "https://maps.googleapis.com/maps/api/geocode/json"
+    params = {'sensor': 'false', 'language': 'ru', 'address': s_city}
+    res = requests.get(url, params=params)
+    results = res.json()
+    response_status = results['status']
+
+    if response_status!="OK":
+        return "ERROR", "1", "1", "No city"
+
+    latitude = results["results"][0]["geometry"]["location"]["lat"]
+    longitude = results["results"][0]["geometry"]["location"]["lng"]
+
+    locality_type = results["results"][0]["address_components"][0]["types"][0]
+    address_components = results["results"][0]["address_components"]
+
+    isKZ = False
+    i = 0
+    for obj in address_components:
+        if results["results"][0]["address_components"][i]["short_name"] == "KZ":
+            isKZ = True
+        i = i+1
+    if locality_type != "locality" or isKZ==False:
+        return "OK", latitude, longitude, results["results"][0]["formatted_address"]
+    else:
+        return "OK", latitude, longitude, results["results"][0]["address_components"][0]["short_name"]
+
+    return "ERROR", "1", "1", "Something went wrong"
+
+
 #------NEW WEATHER SERVICE VIA GOOGLE MAPS AND OPENWEATHERMAP------------------
 def serviceWeather(result):
 
@@ -140,64 +198,21 @@ def serviceWeather(result):
 
     # *******Определяем корректное наименование города и координаты********
     try:
-        url = "https://maps.googleapis.com/maps/api/geocode/json"
-        params = {'sensor': 'false', 'language': 'ru', 'address': s_city}
-        res = requests.get(url, params=params)
-        results = res.json()
-        response_status = results['status']
-        if response_status!="OK":
+        status, latitude, longitude, s_city = getWeatherCity(s_city)
+
+        if status == "ERROR":
             speech = u"Кажется такого города не существует..."
             return returnJsonFunction(speech, "weather")
 
-        location = results['results'][0]['geometry']['location']
-        latitude = results["results"][0]["geometry"]["location"]["lat"]
-        longitude = results["results"][0]["geometry"]["location"]["lng"]
-        locality_type = results["results"][0]["address_components"][0]["types"][0]
-
-        address_components = results["results"][0]["address_components"]
-
-        isKZ = False
-        i = 0
-        for obj in address_components:
-            if results["results"][0]["address_components"][i]["short_name"] == "KZ":
-                isKZ = True
-            i = i+1
-
-        if locality_type != "locality" or isKZ==False:
-            s_city = results["results"][0]["formatted_address"]
-        else:
-            s_city = results["results"][0]["address_components"][0]["short_name"]
-
-        # OpenWeatherMap key
-        appid = "01e9d712127bbffa4c9e669f39d3a127"
-
         if s_day == "" or len(s_day)<10:
-            #-------------Прогноз погоды на сегодня-------------------
-            res = requests.get("http://api.openweathermap.org/data/2.5/find",
-                params={'lat': latitude, 'lon': longitude, 'type': 'accurate', 'lang': 'ru', 'units': 'metric', 'APPID': appid})
-
-            data = res.json()
-            temp = str(int(round(data['list'][0]['main']['temp'])))
-            description = data['list'][0]['weather'][0]['description']
-            description = localize(description, temp)
-
-            speech = u"Сегодня в "+s_city+": "+description+ u", температура "+temp + u" °C "
+            speech = getWeatherSpeechToday(s_city, latitude, longitude, "01e9d712127bbffa4c9e669f39d3a127")
         else:
-            #---------Прогноз погоды на последующие дни--------------
             d1 = datetime.strptime(s_day, "%Y-%m-%d").date()
             d2 = datetime.today().date()
             cnt = (d1-d2).days
 
             if cnt>=0 and cnt<16:
-                res = requests.get("http://api.openweathermap.org/data/2.5/forecast/daily",
-                        params={'lat': latitude, 'lon': longitude, 'type': 'accurate', 'lang': 'ru', 'units': 'metric', 'APPID': appid, 'cnt': cnt+1})
-                data = res.json()
-                temp = str(int(round(data['list'][cnt]['temp']['day'])))
-                description = data['list'][cnt]['weather'][0]['description']
-                description = localize(description, temp)
-
-                s_day = localizeDay(d1.strftime("%a"), d1.strftime("%d"))
-                speech = u"Погода на " + s_day +  u" в " +s_city+": "+description+ u", температура "+temp + u" °C "
+                speech = speech = getWeatherSpeech(s_city, latitude, longitude, "01e9d712127bbffa4c9e669f39d3a127", cnt)
             elif cnt>=16:
                 speech = u"Так далеко я не могу предсказать 🤔"
             else:
