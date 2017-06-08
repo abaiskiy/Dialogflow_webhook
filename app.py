@@ -137,13 +137,14 @@ def getWeatherSpeechToday(s_city, latitude, longitude, appid):
 
 
 #-------------Погода на другие дни----------------------------------------------
-def getWeatherSpeech(s_city, latitude, longitude, appid, cnt):
+def getWeatherSpeech(s_city, latitude, longitude, appid, cnt, d1 ,d2):
     res = requests.get("http://api.openweathermap.org/data/2.5/forecast/daily",
             params={'lat': latitude, 'lon': longitude, 'type': 'accurate', 'lang': 'ru', 'units': 'metric', 'APPID': appid, 'cnt': cnt+1})
     data = res.json()
     temp = str(int(round(data['list'][cnt]['temp']['day'])))
     description = data['list'][cnt]['weather'][0]['description']
     description = localize(description, temp)
+
     s_day = localizeDay(d1.strftime("%a"), d1.strftime("%d"))
 
     return u"Погода на " + s_day +  u" в " +s_city+": "+description+ u", температура "+temp + u" °C "
@@ -212,7 +213,7 @@ def serviceWeather(result):
             cnt = (d1-d2).days
 
             if cnt>=0 and cnt<16:
-                speech = speech = getWeatherSpeech(s_city, latitude, longitude, "01e9d712127bbffa4c9e669f39d3a127", cnt)
+                speech = speech = getWeatherSpeech(s_city, latitude, longitude, "01e9d712127bbffa4c9e669f39d3a127", cnt, d1, d2)
             elif cnt>=16:
                 speech = u"Так далеко я не могу предсказать 🤔"
             else:
