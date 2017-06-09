@@ -150,10 +150,20 @@ def getWeatherSpeech(s_city, latitude, longitude, appid, cnt, d1 ,d2):
     return u"Погода на " + s_day +  u" в " +s_city+": "+description+ u", температура "+temp + u" °C "
 
 
-#-------------Достаем корректное название города с Google response--------------
+def getCorrectCityName(s_city):
+    if s_city == "":
+        s_city = u"Алматы "
+    str = ""
+    for letter in s_city:
+        if letter==' ':
+            return str
+        str = str + letter
+    return s_city
 
-def getWeatherCity(s_city):
+#-------------Достаем данные города с Google response--------------
+def getWeatherCityCoordinates(s_city):
 
+    s_city = getCorrectCityName(s_city)
     url = "https://maps.googleapis.com/maps/api/geocode/json"
     params = {'sensor': 'false', 'language': 'ru', 'address': s_city}
     res = requests.get(url, params=params)
@@ -189,8 +199,6 @@ def serviceWeather(result):
     parameters = result.get("parameters")
     s_city = parameters.get("geo-city")
     s_day = str(parameters.get("date"))
-    if s_city == "":
-        s_city = u"Алматы"
     isWeather = parameters.get("weather")
 
     if isWeather=="":
@@ -199,7 +207,7 @@ def serviceWeather(result):
 
     # *******Определяем корректное наименование города и координаты********
     try:
-        status, latitude, longitude, s_city = getWeatherCity(s_city)
+        status, latitude, longitude, s_city = getWeatherCityCoordinates(s_city)
 
         if status == "ERROR":
             speech = u"Кажется такого города не существует..."
