@@ -169,7 +169,8 @@ def getWeatherCityCoordinates(s_city):
     response_status = results['status']
 
     if response_status!="OK":
-        return "ERROR", "1", "1", "No city"
+        #return "ERROR", "1", "1", "No city"
+        return "ERROR", "1", "1", s_city
 
     latitude = results["results"][0]["geometry"]["location"]["lat"]
     longitude = results["results"][0]["geometry"]["location"]["lng"]
