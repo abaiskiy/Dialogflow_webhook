@@ -148,17 +148,19 @@ def getWeatherSpeech(s_city, latitude, longitude, appid, cnt, d1 ,d2):
     return u"Погода на " + s_day +  u" в " +s_city+": "+description+ u", температура "+temp + u" °C "
 
 
+#-----------Отсекает лишнее от названия города----------------------------------
 def getCorrectCityName(s_city):
     if s_city == "":
-        s_city = u"Алматы "
+        s_city = u"Алматы"
     str = ""
     for letter in s_city:
         if letter==' ':
             return str
-            return s_city
         str = str + letter
+    return s_city
 
-#-------------Достаем данные города с Google response--------------
+
+#-------------Достаем данные города с Google response---------------------------
 def getWeatherCityCoordinates(s_city):
 
     s_city = getCorrectCityName(s_city)
@@ -169,8 +171,7 @@ def getWeatherCityCoordinates(s_city):
     response_status = results['status']
 
     if response_status!="OK":
-        #return "ERROR", "1", "1", "No city"
-        return "ERROR", "1", "1", str(s_city)
+        return "ERROR", "1", "1", "No city"
 
     latitude = results["results"][0]["geometry"]["location"]["lat"]
     longitude = results["results"][0]["geometry"]["location"]["lng"]
@@ -209,7 +210,7 @@ def serviceWeather(result):
         status, latitude, longitude, s_city = getWeatherCityCoordinates(s_city)
 
         if status == "ERROR":
-            speech = u"Кажется такого города не существует..."+s_city
+            speech = u"Кажется такого города не существует..."
             return returnJsonFunction(speech, "weather")
 
         if s_day == "" or len(s_day)<10:
