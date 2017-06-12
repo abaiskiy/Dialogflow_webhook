@@ -208,7 +208,7 @@ def serviceWeather(result):
         status, latitude, longitude, s_city = getWeatherCityCoordinates(s_city)
 
         if status == "ERROR":
-            speech = u"Кажется такого города не существует..."
+            speech = u"Кажется такого города не существует..."+s_city
             return returnJsonFunction(speech, "weather")
 
         if s_day == "" or len(s_day)<10:
