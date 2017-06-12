@@ -83,8 +83,6 @@ def serviceWiki(result):
     return returnJsonFunction(speech, "wiki")
 
 
-
-
 #Функция для корректировки некоторых языков
 def getLanguage(lang):
     if lang=="zh-CHT":
@@ -157,8 +155,8 @@ def getCorrectCityName(s_city):
     for letter in s_city:
         if letter==' ':
             return str
+            return s_city
         str = str + letter
-    return s_city
 
 #-------------Достаем данные города с Google response--------------
 def getWeatherCityCoordinates(s_city):
@@ -221,7 +219,7 @@ def serviceWeather(result):
             cnt = (d1-d2).days
 
             if cnt>=0 and cnt<16:
-                speech = speech = getWeatherSpeech(s_city, latitude, longitude, "01e9d712127bbffa4c9e669f39d3a127", cnt, d1, d2)
+                speech = getWeatherSpeech(s_city, latitude, longitude, "01e9d712127bbffa4c9e669f39d3a127", cnt, d1, d2)
             elif cnt>=16:
                 speech = u"Так далеко я не могу предсказать 🤔"
             else:
