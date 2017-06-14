@@ -124,7 +124,7 @@ def serviceTranslate(result):
 #--------------Погода на сегодня------------------------------------------------
 def getWeatherSpeechToday(s_city, latitude, longitude):
 
-    url = "http://api.wunderground.com/api/d6def0217fa138e1/hourly/lang:RU/q/"+latitude+"," +longitude+ ".json"
+    url = "http://api.wunderground.com/api/d6def0217fa138e1/hourly/lang:RU/q/"+str(latitude)+ "," +str(longitude) + ".json"
     #res = requests.get(url)
 
     #data = res.json()
