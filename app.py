@@ -125,15 +125,14 @@ def serviceTranslate(result):
 def getWeatherSpeechToday(s_city, latitude, longitude):
 
     url = "http://api.wunderground.com/api/d6def0217fa138e1/hourly/lang:RU/q/"+str(latitude)+ "," +str(longitude) + ".json"
-    #res = requests.get(url)
+    res = requests.get(url)
 
-    #data = res.json()
+    data = res.json()
 
-    #description = data["termsofService"]
-    #temp = data["hourly_forecast"][0]["FCTTIME"]["pretty"]
+    description = data["termsofService"]
+    temp = data["hourly_forecast"][0]["FCTTIME"]["pretty"]
 
-    return "pzdc"
-    #return u"Сегодня в "+s_city+": "+description+ u", температура "+temp + u" °C "
+    return u"Сегодня в "+s_city+": "+description+ u", температура "+temp + u" °C "
 
 
 #-------------Погода на другие дни----------------------------------------------
