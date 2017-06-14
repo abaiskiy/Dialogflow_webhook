@@ -122,20 +122,24 @@ def serviceTranslate(result):
 
 
 #--------------Погода на сегодня------------------------------------------------
-def getWeatherSpeechToday(s_city, latitude, longitude, appid):
+def getWeatherSpeechToday(s_city, latitude, longitude):
 
-    res = requests.get("http://api.openweathermap.org/data/2.5/find",
-        params={'lat': latitude, 'lon': longitude, 'type': 'accurate', 'lang': 'ru', 'units': 'metric', 'APPID': appid})
+    url = "http://api.wunderground.com/api/d6def0217fa138e1/hourly/lang:RU/q/"+latitude+"," +longitude+ ".json"
+    res = requests.get(url)
+
     data = res.json()
-    temp = str(int(round(data['list'][0]['main']['temp'])))
-    description = data['list'][0]['weather'][0]['description']
-    description = localize(description, temp)
+
+    description = data["termsofService"]
+    temp = data["hourly_forecast"][0]["FCTTIME"]["pretty"]
+
 
     return u"Сегодня в "+s_city+": "+description+ u", температура "+temp + u" °C "
 
 
 #-------------Погода на другие дни----------------------------------------------
-def getWeatherSpeech(s_city, latitude, longitude, appid, cnt, d1 ,d2):
+def getWeatherSpeech(s_city, latitude, longitude, cnt, d1 ,d2):
+
+    appid = "01e9d712127bbffa4c9e669f39d3a127"
     res = requests.get("http://api.openweathermap.org/data/2.5/forecast/daily",
             params={'lat': latitude, 'lon': longitude, 'type': 'accurate', 'lang': 'ru', 'units': 'metric', 'APPID': appid, 'cnt': cnt+1})
     data = res.json()
@@ -214,14 +218,14 @@ def serviceWeather(result):
             return returnJsonFunction(speech, "weather")
 
         if s_day == "" or len(s_day)<10:
-            speech = getWeatherSpeechToday(s_city, latitude, longitude, "01e9d712127bbffa4c9e669f39d3a127")
+            speech = getWeatherSpeechToday(s_city, latitude, longitude)
         else:
             d1 = datetime.strptime(s_day, "%Y-%m-%d").date()
             d2 = datetime.today().date()
             cnt = (d1-d2).days
 
             if cnt>=0 and cnt<16:
-                speech = getWeatherSpeech(s_city, latitude, longitude, "01e9d712127bbffa4c9e669f39d3a127", cnt, d1, d2)
+                speech = getWeatherSpeech(s_city, latitude, longitude, cnt, d1, d2)
             elif cnt>=16:
                 speech = u"Так далеко я не могу предсказать 🤔"
             else:
