@@ -132,7 +132,7 @@ def getWeatherSpeechToday(s_city, latitude, longitude):
     #description = data["termsofService"]
     #temp = data["hourly_forecast"][0]["FCTTIME"]["pretty"]
 
-    return url
+    return "pzdc"
     #return u"Сегодня в "+s_city+": "+description+ u", температура "+temp + u" °C "
 
 
