@@ -129,10 +129,11 @@ def getWeatherSpeechToday(s_city, latitude, longitude):
 
     data = res.json()
 
-    description = data["termsofService"]
-    temp = data["hourly_forecast"][0]["FCTTIME"]["pretty"]
+    #description = data["termsofService"]
+    #temp = data["hourly_forecast"][0]["FCTTIME"]["pretty"]
 
-    return u"Сегодня в "+s_city+": "+description+ u", температура "+temp + u" °C "
+    return url
+    #return u"Сегодня в "+s_city+": "+description+ u", температура "+temp + u" °C "
 
 
 #-------------Погода на другие дни----------------------------------------------
