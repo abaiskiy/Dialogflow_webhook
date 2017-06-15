@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 from __future__ import print_function
 from future.standard_library import install_aliases
 install_aliases()
@@ -105,19 +105,6 @@ def serviceTranslate(result):
 
     return returnJsonFunction(speech, "translate")
 
-
-#--------------Погода на сегодня------------------------------------------------
-def getWeatherSpeechTodayWunderground(s_city, latitude, longitude):
-
-    url = "http://api.wunderground.com/api/d6def0217fa138e1/hourly/lang:RU/q/"+str(latitude)+ "," +str(longitude) + ".json"
-    res = requests.get(url)
-
-    data = res.json()
-
-    description = data["response"]["termsofService"]
-    temp = data["hourly_forecast"][0]["FCTTIME"]["pretty"]
-
-    return u"Сегодня в "+s_city+": "+description+ u", температура "+temp + u" °C "
 
 
 #--------------Погода на сегодня------------------------------------------------
