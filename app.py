@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python
+#!/usr/bin/env python
 from __future__ import print_function
 from future.standard_library import install_aliases
 install_aliases()
@@ -50,7 +50,7 @@ def makeWikiRequest(text):
     params = "?action=query&prop=extracts&exintro&indexpageids=true&format=json&generator=search&gsrlimit=1&exsentences=6&explaintext&gsrsearch=" + text
     return baseUrl + params
 
-# Уменьшает возвращаемый текст до определенной длины
+# Уменьшает возвращаемый текст до определенной длины и точки
 def beautifyWikiText(text, textLength):
     total = 0
     brackets = 0
@@ -69,25 +69,20 @@ def beautifyWikiText(text, textLength):
 #-----Сервис энциклопедия Wikipedia-----
 def serviceWiki(result):
     parameters = result.get("parameters")
-    text = parameters.get("text")
-    req = makeWikiRequest(text)
+    req = makeWikiRequest(parameters.get("text"))
 
     try:
         res = requests.get(req)
         data = res.json()
         speech = data['query']['pages'].values()[0]['extract']
         speech = beautifyWikiText(speech, 150)
+
+        # working url address
+        #"https://ru.wikipedia.org/wiki/" + parameters.get("text")
     except:
         speech = u"К сожалению, я пока не знаю ответ на этот вопрос 😕"
 
     return returnJsonFunction(speech, "wiki")
-
-
-#Функция для корректировки некоторых языков
-def getLanguage(lang):
-    if lang=="zh-CHT":
-        return "zh-CN"
-    return lang
 
 
 # Создаем запрос для Перевода текста
@@ -95,23 +90,17 @@ def makeTranslateRequest(q, langCode):
 
     # Google translate key
     key = 'AIzaSyAhP5cBWEpmUhIOavwZ2GFlMTFdhJrwxAQ'
-    target = getLanguage(langCode)
     url = "https://translation.googleapis.com/language/translate/v2?"
-    params = "q="+q+"&format=text"+"&target="+target+"&key="+key
+    params = "q="+q+"&format=text"+"&target="+langCode+"&key="+key
 
     return url+params
 
 
 #-----Сервис Google translate-----
 def serviceTranslate(result):
+
     parameters = result.get("parameters")
     q = parameters.get("text")
-
-    if "langCode" in parameters:
-        langCode = parameters.get("langCode")
-    else:
-        langCode = parameters.get("to").get("langCode")
-
     req = makeTranslateRequest(q, langCode)
     res = requests.get(req)
     data = res.json()
@@ -120,9 +109,8 @@ def serviceTranslate(result):
     return returnJsonFunction(speech, "translate")
 
 
-
 #--------------Погода на сегодня------------------------------------------------
-def getWeatherSpeechToday(s_city, latitude, longitude):
+def getWeatherSpeechTodayWunderground(s_city, latitude, longitude):
 
     url = "http://api.wunderground.com/api/d6def0217fa138e1/hourly/lang:RU/q/"+str(latitude)+ "," +str(longitude) + ".json"
     res = requests.get(url)
@@ -131,6 +119,20 @@ def getWeatherSpeechToday(s_city, latitude, longitude):
 
     description = data["response"]["termsofService"]
     temp = data["hourly_forecast"][0]["FCTTIME"]["pretty"]
+
+    return u"Сегодня в "+s_city+": "+description+ u", температура "+temp + u" °C "
+
+
+#--------------Погода на сегодня------------------------------------------------
+def getWeatherSpeechToday(s_city, latitude, longitude):
+
+    appid = "01e9d712127bbffa4c9e669f39d3a127"
+    res = requests.get("http://api.openweathermap.org/data/2.5/find",
+        params={'lat': latitude, 'lon': longitude, 'type': 'accurate', 'lang': 'ru', 'units': 'metric', 'APPID': appid})
+    data = res.json()
+    temp = str(int(round(data['list'][0]['main']['temp'])))
+    description = data['list'][0]['weather'][0]['description']
+    description = localize(description, temp)
 
     return u"Сегодня в "+s_city+": "+description+ u", температура "+temp + u" °C "
 
@@ -151,22 +153,10 @@ def getWeatherSpeech(s_city, latitude, longitude, cnt, d1 ,d2):
     return u"Погода на " + s_day +  u" в " +s_city+": "+description+ u", температура "+temp + u" °C "
 
 
-#-----------Отсекает лишнее от названия города----------------------------------
-def getCorrectCityName(s_city):
-    if s_city == "":
-        s_city = u"Алматы"
-    str = ""
-    for letter in s_city:
-        if letter==' ':
-            return str
-        str = str + letter
-    return s_city
-
-
 #-------------Достаем данные города с Google response---------------------------
 def getWeatherCityCoordinates(s_city):
 
-    s_city = getCorrectCityName(s_city)
+    s_city = s_city.split(" ")
     url = "https://maps.googleapis.com/maps/api/geocode/json"
     params = {'sensor': 'false', 'language': 'ru', 'address': s_city}
     res = requests.get(url, params=params)
@@ -193,7 +183,7 @@ def getWeatherCityCoordinates(s_city):
     else:
         return "OK", latitude, longitude, results["results"][0]["address_components"][0]["short_name"]
 
-    return "ERROR", "1", "1", "Something went wrong"
+    return "ERROR", "1", "1", u"Что то пошло не так"
 
 
 #------NEW WEATHER SERVICE VIA GOOGLE MAPS AND OPENWEATHERMAP------------------
