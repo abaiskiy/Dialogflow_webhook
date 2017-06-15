@@ -98,6 +98,8 @@ def serviceTranslate(result):
 
     parameters = result.get("parameters")
     q = parameters.get("text")
+    langCode = parameters.get("langCode")
+
     req = makeTranslateRequest(q, langCode)
     res = requests.get(req)
     data = res.json()
