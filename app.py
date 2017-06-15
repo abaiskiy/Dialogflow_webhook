@@ -76,9 +76,6 @@ def serviceWiki(result):
         data = res.json()
         speech = data['query']['pages'].values()[0]['extract']
         speech = beautifyWikiText(speech, 150)
-
-        # working url address
-        #"https://ru.wikipedia.org/wiki/" + parameters.get("text")
     except:
         speech = u"К сожалению, я пока не знаю ответ на этот вопрос 😕"
 
