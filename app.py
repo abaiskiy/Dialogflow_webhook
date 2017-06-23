@@ -43,6 +43,34 @@ def getService(req):
         return serviceTranslate(result)
     elif action=="dar.wiki":
         return serviceWiki(result)
+    elif action=="sxodim":
+        return serviceSxodim(result)
+
+
+
+# Сервис Sxodim.kz
+def serviceSxodim(result):
+    
+    parameters = result.get("parameters")
+    
+    date = parameters.get("date")
+    date_period = parameters.get("date-period")
+    city = parameters.get("city")
+
+    if date_period:
+        date_period = date_period.split("/")
+        date1 = datetime.strptime(date_period[0], "%Y-%m-%d").date()
+        date2 = datetime.strptime(date_period[1], "%Y-%m-%d").date()
+    else:
+        date1 = datetime.strptime(date, "%Y-%m-%d").date()
+        date2 = datetime.strptime(date, "%Y-%m-%d").date()
+    # date1-date2
+    #s_day = localizeDay(d1.strftime("%a"), d1.strftime("%d"))
+    speech = u"Вот что я нашел"
+
+    return returnJsonFunction(speech, "sxodim")
+
+
 
 # Создаем запрос к Wikipedia
 def makeWikiRequest(text):
@@ -50,7 +78,7 @@ def makeWikiRequest(text):
     params = "?action=query&prop=extracts&exintro&indexpageids=true&format=json&generator=search&gsrlimit=1&exsentences=6&explaintext&gsrsearch=" + text
     return baseUrl + params
 
-# Уменьшает возвращаемый текст до определенной длины и точки
+# Уменьшает возвращаемый текст до определенной длины и точки, учитывая скобки
 def beautifyWikiText(text, textLength):
     total = 0
     brackets = 0
@@ -164,6 +192,7 @@ def getWeatherCityCoordinates(s_city):
         if results["results"][0]["address_components"][i]["short_name"] == "KZ":
             isKZ = True
         i = i+1
+
     if locality_type != "locality" or isKZ==False:
         return "OK", latitude, longitude, results["results"][0]["formatted_address"]
     else:
