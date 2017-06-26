@@ -39,13 +39,21 @@ def getService(req):
     action = result.get("action")
     if action=="weather":
         return serviceWeather(result)
-    elif action=="translate.text":
+    elif action=="translate":
         return serviceTranslate(result)
-    elif action=="dar.wiki":
+    elif action=="wiki":
         return serviceWiki(result)
     elif action=="sxodim":
         return serviceSxodim(result)
+    else:
+        return serviceDefault()
 
+
+# Дефолтный сервис
+def serviceDefault():
+    
+    speech = u"Что-то пошло не так"
+    return returnJsonFunction(speech, "default")
 
 
 # Сервис Sxodim.kz
@@ -69,7 +77,7 @@ def serviceSxodim(result):
     speech = u"Вот что я нашел"
 
     return returnJsonFunction(speech, "sxodim")
-
+    
 
 
 # Создаем запрос к Wikipedia
@@ -94,7 +102,7 @@ def beautifyWikiText(text, textLength):
           return str
     return str
 
-#-----Сервис энциклопедия Wikipedia-----
+# Сервис Энциклопедия Wikipedia
 def serviceWiki(result):
     parameters = result.get("parameters")
     req = makeWikiRequest(parameters.get("text"))
@@ -121,7 +129,7 @@ def makeTranslateRequest(q, langCode):
     return url+params
 
 
-#-----Сервис Google translate-----
+# Сервис Google Translate
 def serviceTranslate(result):
 
     parameters = result.get("parameters")
@@ -137,7 +145,7 @@ def serviceTranslate(result):
 
 
 
-#--------------Погода на сегодня------------------------------------------------
+# Погода на сегодня
 def getWeatherSpeechToday(s_city, latitude, longitude):
 
     appid = "01e9d712127bbffa4c9e669f39d3a127"
@@ -151,7 +159,7 @@ def getWeatherSpeechToday(s_city, latitude, longitude):
     return u"Сегодня в "+s_city+": "+description+ u", температура "+temp + u" °C "
 
 
-#-------------Погода на другие дни----------------------------------------------
+# Погода на другие дни, кроме сегодня
 def getWeatherSpeech(s_city, latitude, longitude, cnt, d1 ,d2):
 
     appid = "01e9d712127bbffa4c9e669f39d3a127"
@@ -167,7 +175,7 @@ def getWeatherSpeech(s_city, latitude, longitude, cnt, d1 ,d2):
     return u"Погода на " + s_day +  u" в " +s_city+": "+description+ u", температура "+temp + u" °C "
 
 
-#-------------Достаем данные города с Google response---------------------------
+# Возвращает данные города с Google Maps
 def getWeatherCityCoordinates(s_city):
 
     s_city = s_city.split(" ")
@@ -201,7 +209,7 @@ def getWeatherCityCoordinates(s_city):
     return "ERROR", "1", "1", u"Что то пошло не так"
 
 
-#------NEW WEATHER SERVICE VIA GOOGLE MAPS AND OPENWEATHERMAP------------------
+# Сервис Прогноз погоды Openweahermap
 def serviceWeather(result):
 
     parameters = result.get("parameters")
@@ -213,7 +221,7 @@ def serviceWeather(result):
         speech = u"Я пока не до конца понимаю тебя, но я учусь"
         return returnJsonFunction(speech, "weather")
 
-    # *******Определяем корректное наименование города и координаты********
+    # Определям корректного название города и координаты
     try:
         status, latitude, longitude, s_city = getWeatherCityCoordinates(s_city)
 
@@ -240,7 +248,7 @@ def serviceWeather(result):
         pass
 
     return returnJsonFunction(speech, "weather")
-#-------------------------------------------------------------------------------
+
 
 # заворачиваем ответ с кнопками в JSON
 def returnJsonFunction(speech, source):
@@ -279,7 +287,7 @@ def returnJsonFunction(speech, source):
         ]
     }
 
-#--------------- костыль----------спасибо OpenWeatherMap
+# Костыль, спасибо OpenWeatherMap
 def localize(desc, temp):
     if (temp>0) and (desc==u"небольшой снегопад" or desc==u"снегопад"):
         return u"возможны осадки"
