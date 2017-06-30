@@ -108,7 +108,7 @@ def serviceWiki(result):
     req = makeWikiRequest(parameters.get("text"))
 
     try:
-        res = requests.get(req)
+        res = requests.get(req, timeout=5)
         data = res.json()
         speech = data['query']['pages'].values()[0]['extract']
         speech = beautifyWikiText(speech, 150)
