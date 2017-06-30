@@ -108,7 +108,7 @@ def serviceWiki(result):
     req = makeWikiRequest(parameters.get("text"))
 
     try:
-        res = requests.get(req, timeout=0.1)
+        res = requests.get(req, timeout=5)
         data = res.json()
         speech = data['query']['pages'].values()[0]['extract']
         speech = beautifyWikiText(speech, 150)
@@ -137,9 +137,13 @@ def serviceTranslate(result):
     langCode = parameters.get("langCode")
 
     req = makeTranslateRequest(q, langCode)
-    res = requests.get(req)
-    data = res.json()
-    speech = data['data']['translations'][0]['translatedText']
+    
+    try:
+        res = requests.get(req, timeout=5)
+        data = res.json()
+        speech = data['data']['translations'][0]['translatedText']
+    except:
+        speech = u"Что-то пошло не так..."
 
     return returnJsonFunction(speech, "translate")
 
@@ -149,31 +153,34 @@ def serviceTranslate(result):
 def getWeatherSpeechToday(s_city, latitude, longitude):
 
     appid = "01e9d712127bbffa4c9e669f39d3a127"
-    res = requests.get("http://api.openweathermap.org/data/2.5/find",
-        params={'lat': latitude, 'lon': longitude, 'type': 'accurate', 'lang': 'ru', 'units': 'metric', 'APPID': appid})
-    data = res.json()
-    temp = str(int(round(data['list'][0]['main']['temp'])))
-    description = data['list'][0]['weather'][0]['description']
-    description = localize(description, temp)
-
-    return u"Сегодня в "+s_city+": "+description+ u", температура "+temp + u" °C "
-
+    try:
+        res = requests.get("http://api.openweathermap.org/data/2.5/find",
+            params={'lat': latitude, 'lon': longitude, 'type': 'accurate', 'lang': 'ru', 'units': 'metric', 'APPID': appid}, timeout=5)
+        data = res.json()
+        temp = str(int(round(data['list'][0]['main']['temp'])))
+        description = data['list'][0]['weather'][0]['description']
+        description = localize(description, temp)
+        return u"Сегодня в "+s_city+": "+description+ u", температура "+temp + u" °C "
+    except:
+        return u"Что-то пошло не так..."
 
 # Погода на другие дни, кроме сегодня
 def getWeatherSpeech(s_city, latitude, longitude, cnt, d1 ,d2):
 
     appid = "01e9d712127bbffa4c9e669f39d3a127"
-    res = requests.get("http://api.openweathermap.org/data/2.5/forecast/daily",
-            params={'lat': latitude, 'lon': longitude, 'type': 'accurate', 'lang': 'ru', 'units': 'metric', 'APPID': appid, 'cnt': cnt+1})
-    data = res.json()
-    temp = str(int(round(data['list'][cnt]['temp']['day'])))
-    description = data['list'][cnt]['weather'][0]['description']
-    description = localize(description, temp)
+    try:
+        res = requests.get("http://api.openweathermap.org/data/2.5/forecast/daily",
+                params={'lat': latitude, 'lon': longitude, 'type': 'accurate', 'lang': 'ru', 'units': 'metric', 'APPID': appid, 'cnt': cnt+1}, timeout=5)
+        data = res.json()
+        temp = str(int(round(data['list'][cnt]['temp']['day'])))
+        description = data['list'][cnt]['weather'][0]['description']
+        description = localize(description, temp)
 
-    s_day = localizeDay(d1.strftime("%a"), d1.strftime("%d"))
+        s_day = localizeDay(d1.strftime("%a"), d1.strftime("%d"))
 
-    return u"Погода на " + s_day +  u" в " +s_city+": "+description+ u", температура "+temp + u" °C "
-
+        return u"Погода на " + s_day +  u" в " +s_city+": "+description+ u", температура "+temp + u" °C "
+    except:
+        return u"Что-то пошло не так"
 
 # Возвращает данные города с Google Maps
 def getWeatherCityCoordinates(s_city):
@@ -181,7 +188,7 @@ def getWeatherCityCoordinates(s_city):
     s_city = s_city.split(" ")
     url = "https://maps.googleapis.com/maps/api/geocode/json"
     params = {'sensor': 'false', 'language': 'ru', 'address': s_city}
-    res = requests.get(url, params=params)
+    res = requests.get(url, params=params, timeout=5)
     results = res.json()
     response_status = results['status']
 
